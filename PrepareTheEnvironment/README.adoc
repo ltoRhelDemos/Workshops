@@ -3,11 +3,11 @@
 :toc2:
 :imagesdir: images
 
+= How to create a RHEL 8 envirnment with a development subscription using Virtualbox
+
+This How-to is aimed to help you in the creation of a virtual environment for the execution of Red Hat Enterprise Linux. The goal is to propose a totally operational OS environment that could be enabled with a development subscription from Red Hat.
+
 :numbered:
-
-== Description
-
-This instruction could be useful to create a RHEl environment for development purposes. 
 
 == Create a virtual Environment for the workshop
 
@@ -47,7 +47,7 @@ https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machi
 # hostnamectl set-hostname rhelserver
 -----------------
 
-* Register the server with your development account
+* Register the server with your development account. You can get the developer subscription at https://developers.redhat.com/register.
 
 [source,bash]
 -----------------
