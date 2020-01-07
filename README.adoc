@@ -1,0 +1,2 @@
+== Red Hat Latam Technology Office WORKSHOPS
+This page is proposed to the community as a guide for getting in touch with Red Hat Enterprise Linux. Ech subdirectory is devoted to a specific workshop with detailed instructions to take and deliver it.
