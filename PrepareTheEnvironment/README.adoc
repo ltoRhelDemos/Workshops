@@ -1,0 +1,121 @@
+:scrollbar:
+:data-uri:
+:toc2:
+:imagesdir: images
+
+:numbered:
+
+== Description
+
+In this workshop we will be showing an important part of any platform administration, which is the operating system management. A lot of the tasks with the operating system are manual and repetitive, and impose several disadvantages regarding time spent in such activities, complexity associated to management procedures, lack of control in more complex activities and errors in which the administrator could be involved due to the human nature.
+
+Much has been said and written about the new hybrid and multicloud era. At this moment in time, manual tasks supported by human intervention could be the wrong way to transit, just because the scale and complexity requires assistance to be efficient enough to keep the pace of growing.
+
+The Ansible tool, as described officially defines  "a radically simple IT automation engine that automates cloud provisioning, configuration management, application deployment, intra-service orchestration, and many other IT needs." 
+
+This workshop is aimed to show you how easy is to plan and use ansible for automating the most common administration tasks RHEL could require in a day by day basis.
+
+Also, not so common tasks will be shown in order to give you the tools for your daily work in the datacenter.
+
+== Audience
+IT Managers, Architects and technical staff who operates Linux
+
+== Create a virtual Environment for the workshop
+
+=== Install Virtualbox
+
+* Download virtualbox from https://www.virtualbox.org/wiki/Downloads
+* Install and configure the host-only network 
+* Go to File/Host Network Manager… or Ctrl+H
+* Push the create Button
+* A Virtualbox Host-Only Ethernet Adapter will be created
+* Select it and configure the ip address and mask
+
+image::host_network_manager_ip_mask_config.png[Host network manager ip and mask config]
+
+* Then activate and configure the DHCP server
+
+image::dhcp_activation.png[dhcp server activation]
+
+* Now, all the servers which have a host only network interface configured will be enabled to communicate with each other.
+* The virtual machines imported in the next steps have configured 2 network interfaces.
+- A NAT interface for internet connection
+- A Host Only Network Interface for the internal networking, which is required to communicate the control and managed host.
+
+=== Download the RHEL 8x virtual machine
+
+
+* Download the unregistered applicance from 
+https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machine (.ova)^]
+* Import the MV to VirtualBox.
+* Rename the MV to “RHEL8x control node”.
+* Boot the server
+* Login with user: root, password: ltodemos
+* Change the hostname
+
+[source,bash]
+-----------------
+# hostnamectl set-hostname controlhost
+-----------------
+
+* Register the server with your development account
+
+[source,bash]
+-----------------
+# subscription-manager register --auto-attach
+-----------------
+* Introduce your username and password with your subscription credentials.
+* Update the server
+
+[source,bash]
+-----------------
+# yum update
+-----------------
+
+=== Clone the machine to create a managed host server
+
+* Do a poweroff from the rhel server already installed
+* From VirtualBox, select the MV and clone it executing (menu) machine/clone or (Ctrl-O) to clone the server to be a managed host.
+* Define a new MAC address policy to a “generate a new MAC address for all network adapters”
+* Change the name to “RHEL8x managed host”.
+* Boot the server
+* Login with user: root, password: ltodemos
+* Change the hostname
+
+[source,bash]
+-----------------
+# hostnamectl set-hostname managedhost
+-----------------
+* Register the server with your development account
+
+[source,bash]
+-----------------
+# subscription-manager register --auto-attach
+-----------------
+
+* Introduce your username and password with your subscription credentials.
+
+=== Find out the IP addresses of both servers
+
+Login in both servers and check their IP addresses issuing
+
+[source,bash]
+-----------------
+# ifconfig enp0s8
+-----------------
+
+Write down the ip for future references.
+
+=== Document the information of the servers
+
+Fill the table below.
+
+[options="header"]
+|=======================
+|Server | ip address
+|Control host |
+|Managed host |
+|=======================
+
+[NOTE]
+At this point you have 2 servers, a control host and a managed host. These are the servers you need to follow this workshop.
