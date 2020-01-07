@@ -26,13 +26,12 @@ image::host_network_manager_ip_mask_config.png[Host network manager ip and mask 
 
 image::dhcp_activation.png[dhcp server activation]
 
-* Now, all the servers which have a host only network interface configured will be enabled to communicate with each other.
-* The virtual machines imported in the next steps have configured 2 network interfaces.
+* Now, all the servers which have a "host only network interface" configured will be enabled to communicate with each other.
+* This virtual machine have configured 2 network interfaces.
 - A NAT interface for internet connection
 - A Host Only Network Interface for the internal networking, which is required to communicate the control and managed host.
 
 === Download the RHEL 8x virtual machine
-
 
 * Download the unregistered applicance from 
 https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machine (.ova)^]
@@ -63,7 +62,7 @@ https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machi
 
 === Find out the IP address
 
-Login in and check their IP address issuing
+Log in and check their IP address issuing
 
 [source,bash]
 -----------------
