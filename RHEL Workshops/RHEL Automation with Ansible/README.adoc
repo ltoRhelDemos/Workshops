@@ -1,1 +1,468 @@
-README.adoc
+:scrollbar:
+:data-uri:
+:toc2:
+:imagesdir: images
+
+:numbered:
+
+== Description
+
+In this workshop we will be showing an important part of any platform administration, which is the operating system management. A lot of the tasks with the operating system are manual and repetitive, and impose several disadvantages regarding time spent in such activities, complexity associated to management procedures, lack of control in more complex activities and errors in which the administrator could be involved due to the human nature.
+
+Much has been said and written about the new hybrid and multicloud era. At this moment in time, manual tasks supported by human intervention could be the wrong way to transit, just because the scale and complexity requires assistance to be efficient enough to keep the pace of growing.
+
+The Ansible tool, as described officially defines  "a radically simple IT automation engine that automates cloud provisioning, configuration management, application deployment, intra-service orchestration, and many other IT needs." 
+
+This workshop is aimed to show you how easy is to plan and use ansible for automating the most common administration tasks RHEL could require in a day by day basis.
+
+Also, not so common tasks will be shown in order to give you the tools for your daily work in the datacenter.
+
+== Audience
+IT Managers, Architects and technical staff who operates Linux
+
+== Create a virtual Environment for the workshop
+
+=== Install Virtualbox
+
+* Download virtualbox from https://www.virtualbox.org/wiki/Downloads
+* Install and configure the host-only network 
+* Go to File/Host Network Manager… or Ctrl+H
+* Push the create Button
+* A Virtualbox Host-Only Ethernet Adapter will be created
+* Select it and configure the ip address and mask
+
+image::host_network_manager_ip_mask_config.png[Host network manager ip and mask config]
+
+* Then activate and configure the DHCP server
+
+image::dhcp_activation.png[dhcp server activation]
+
+* Now, all the servers which have a host only network interface configured will be enabled to communicate with each other.
+* The virtual machines imported in the next steps have configured 2 network interfaces.
+- A NAT interface for internet connection
+- A Host Only Network Interface for the internal networking, which is required to communicate the control and managed host.
+
+=== Download the RHEL 8x virtual machine
+
+
+* Download the unregistered applicance from 
+https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machine (.ova)^]
+* Import the MV to VirtualBox.
+* Rename the MV to “RHEL8x control node”.
+* Boot the server
+* Login with user: root, password: ltodemos
+* Change the hostname
+
+[source,bash]
+-----------------
+# hostnamectl set-hostname controlhost
+-----------------
+
+* Register the server with your development account
+
+[source,bash]
+-----------------
+# subscription-manager register --auto-attach
+-----------------
+* Introduce your username and password with your subscription credentials.
+* Update the server
+
+[source,bash]
+-----------------
+# yum update
+-----------------
+
+=== Clone the machine to create a managed host server
+
+* Do a poweroff from the rhel server already installed
+* From VirtualBox, select the MV and clone it executing (menu) machine/clone or (Ctrl-O) to clone the server to be a managed host.
+* Define a new MAC address policy to a “generate a new MAC address for all network adapters”
+* Change the name to “RHEL8x managed host”.
+* Boot the server
+* Login with user: root, password: ltodemos
+* Change the hostname
+
+[source,bash]
+-----------------
+# hostnamectl set-hostname managedhost
+-----------------
+* Register the server with your development account
+
+[source,bash]
+-----------------
+# subscription-manager register --auto-attach
+-----------------
+
+* Introduce your username and password with your subscription credentials.
+
+=== Find out the IP addresses of both servers
+
+Login in both servers and check their IP addresses issuing
+
+[source,bash]
+-----------------
+# ifconfig enp0s8
+-----------------
+
+Write down the ip for future references.
+
+=== Document the information of the servers
+
+Fill the table below.
+
+[options="header"]
+|=======================
+|Server | ip address
+|Control host |
+|Managed host |
+|=======================
+
+[NOTE]
+At this point you have 2 servers, a control host and a managed host. These are the servers you need to follow this workshop.
+
+== What is Ansible and how this fits in my daily work?
+=== Automation!
+
+As the Encyclopedia Britannica defines, “automation can be defined as a technology concerned with performing a process by means of programmed commands combined with automatic feedback control to ensure proper execution of the instructions. The resulting system is capable of operating without human intervention.” 
+
+Automation has been with us for years, indeed the evolution of humanity is based on the notion of “how do I automate a process with repetitive tasks, in order to be more accurate, precise and fast in the execution”.
+
+History is plagued with stories of automation. Gutenberg Printing Press, The Ford’s production line, Coffee machines, Bread Making Machine, Spotify, Amazon online, etc, etc, etc.
+
+In the IT world, the automation is even more necessary to execute repetitive tasks to bring a system to its usability state. This is where Ansible comes in this movie.
+
+From https://www.ansible.com/overview/how-ansible-works we can rescue the following description:
+
+“Ansible is a radically simple IT automation engine that automates cloud provisioning, configuration management, application deployment, intra-service orchestration, and many other IT needs.”
+
+The vast majority of activities you execute on a daily basis for managing and configuring your RHEL (or any other linux or windows OS) can be expressed as a playbook and done automatically on managed hosts.
+
+The goal of this workshop is to propose to participants a practical view of what Ansible can do for helping administrators and developers execute repetitive tasks on the management side of RHEL, in order to be more productive in less time.
+
+== Some Ansible basics
+
+=== Control node
+
+Any machine with Ansible installed. You can run commands and playbooks, invoking /usr/bin/ansible or /usr/bin/ansible-playbook, from any control node. You can use any computer that has Python installed on it as a control node - laptops, shared desktops, and servers can all run Ansible. However, you cannot use a Windows machine as a control node. You can have multiple control nodes.
+
+=== Managed nodes
+
+The network devices (and/or servers) you manage with Ansible. Managed nodes are also sometimes called “hosts”. Ansible is not installed on managed nodes.
+
+=== Inventory
+
+A list of managed nodes. An inventory file is also sometimes called a “hostfile”. Your inventory can specify information like IP address for each managed node. An inventory can also organize managed nodes, creating and nesting groups for easier scaling.
+
+=== Modules 
+
+The units of code Ansible executes. Each module has a particular use, from administering users on a specific type of database to managing VLAN interfaces on a specific type of network device. You can invoke a single module with a task, or invoke several different modules in a playbook.
+
+=== Tasks
+
+The units of action in Ansible. You can execute a single task once with an ad-hoc command.
+
+=== Playbooks
+
+Ordered lists of tasks, saved so you can run those tasks in that order repeatedly. Playbooks can include variables as well as tasks. Playbooks are written in YAML and are easy to read, write, share and understand. 
+
+=== Places to get more information
+
+|=======================
+|https://docs.ansible.com/ansible/latest/network/getting_started/basic_concepts.html
+|https://www.ansible.com/overview/how-ansible-work
+|=======================
+
+== Preparing the environment
+=== Installing the Ansible control host
+==== Log In in the Control Node
+
+Use the root account with ltodemos password to log in to this server with the IP logged in previous steps.
+
+[NOTE]
+If you are in Windows you can download putty for conveniently create 2 entries for log in to the control and management hosts.
+
+==== Finding the repository
+[source,bash]
+-----------------
+# yum repolist all | grep -i ansible
+
+ansible-2-for-rhel-8-x86_64-debug-rpms     Red Hat Ans disabled
+ansible-2-for-rhel-8-x86_64-rpms           Red Hat Ans disabled
+ansible-2-for-rhel-8-x86_64-source-rpms    Red Hat Ans disabled
+Ansible-2.8-for-rhel-8-x86_64-debug-rpms   Red Hat Ans disabled
+ansible-2.8-for-rhel-8-x86_64-rpms         Red Hat Ans disabled
+ansible-2.8-for-rhel-8-x86_64-source-rpms  Red Hat Ans disabled
+ansible-2.9-for-rhel-8-x86_64-debug-rpms   Red Hat Ans disabled
+ansible-2.9-for-rhel-8-x86_64-rpms         Red Hat Ans disabled
+ansible-2.9-for-rhel-8-x86_64-source-rpms  Red Hat Ans disabled
+-----------------
+==== Enabling the repository
+
+[source,bash]
+-----------------
+# subscription-manager repos --enable ansible-2.9-for-rhel-8-x86_64-rpms
+-----------------
+
+==== Installing Ansible and its dependencies
+[source,bash]
+-----------------
+# yum install ansible -y
+-----------------
+
+==== Check everything is ok
+[source,bash]
+-----------------
+# ansible --version
+ansible 2.9.2
+config file = /etc/ansible/ansible.cfg
+onfigured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+ansible python module location = /usr/lib/python3.6/site-packages/ansible
+executable location = /usr/bin/ansible
+python version = 3.6.8 (default, Oct 11 2019, 15:04:54) [GCC 8.3.1 20190507 (Red Hat 8.3.1-4)]
+-----------------
+
+[NOTE]
+In this stage, everything is set up for going forward and start automation!
+
+== Enabling trust between Ansible control node and managed hosts
+For speed up any of the actions proposed in this workshop we recommend to create a trust domain, which is easy to do following a simple steps.
+
+==== Log in in the control node
+
+When asks for password just press enter
+
+[source,bash]
+-----------------
+# ssh-keygen -t rsa
+
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:Ka1jUHpXm0z7fZ1fJYCWqU5ejMmkJWbyj63Cu44I49s root@controlnode
+The key's randomart image is:
++---[RSA 3072]----+
+|                 |
+|           +     |
+|    . = o B .    |
+|     B B @ + .   |
+|    o = S B   . .|
+|     o @ . . . .+|
+|o  .  = =   . ..+|
+|oo..o. o       .o|
+|.ooE++.         .|
++----[SHA256]-----+
+-----------------
+
+==== Copy the certificate on the managed host
+
+[source,bash]
+-----------------
+# ssh-copy-id root@managedhost
+
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/root/.ssh/id_rsa.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+root@192.168.56.121's password:
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   ssh root@192.168.56.121
+and check to make sure that only the key(s) you wanted were added.
+-----------------
+
+[NOTE]
+Now there is trust between control and managed host. We are ready for the next step.
+
+== Checking everything is OK for start automating tasks
+
+Our first task is to check if our control node is able to execute a module on the managed host. This is very simple executing an ad-hoc command.
+
+From control node execute the following command replacing ipmanagedhosts with the IP address of your managed host
+
+[source, bash]
+-------------------
+# ansible all -i 'ip_of_managed_hosts,' -m ping
+
+ipmanagedhosts | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/libexec/platform-python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+-------------------
+
+An example with the ip 192.168.56.119 as the managed host.
+
+[source, bash]
+-------------------
+# ansible all -i '192.168.56.119,' -m ping
+
+192.168.56.119 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/libexec/platform-python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+-------------------
+
+[NOTE]
+Look at the tag “ping” at the end of the JSON returned. If everything is ok, the result is “pong”
+
+[NOTE]
+Ping Module: This module is used to connect to the host, verify a usable python and return pong on success
+
+== How Can I find a Module?
+
+=== Modules are a fundamental part of Ansible
+Modules do a variety of tasks that can be included in playbooks for automating complex procedures.
+
+The best part of modules is that they are very well documented, so is a nice journey to go to the big list and see what they can do for us.
+Accessing the module documentation
+https://docs.ansible.com/ansible/latest/modules/modules_by_category.html 
+Let’s find our first module
+
+We can run ad-hoc commands on managed hosts with the module “command”. 
+
+The module can be found at
+
+https://docs.ansible.com/ansible/latest/modules/command_module.html?highlight=command
+
+
+Let’s find out if the module cab me executed as an ad-hoc command
+
+[source,bash]
+--------------------
+#  ansible all -i '192.168.56.119,' -m command -a "cat /etc/motd"
+
+192.168.56.119 | CHANGED | rc=0 >>
+  _____          _   _    _       _
+ |  __ \        | | | |  | |     | |
+ | |__) |___  __| | | |__| | __ _| |_
+ |  _  // _ \/ _` | |  __  |/ _` | __|
+ | | \ \  __/ (_| | | |  | | (_| | |_
+ |_|  \_\___|\__,_| |_|  |_|\__,_|\__|
+  _   _______ ____        _
+ | | |__   __/ __ \      | |
+ | |    | | | |  | |   __| | ___ _ __ ___   ___  ___
+ | |    | | | |  | |  / _` |/ _ \ '_ ` _ \ / _ \/ __|
+ | |____| | | |__| | | (_| |  __/ | | | | | (_) \__ \
+ |______|_|  \____/   \__,_|\___|_| |_| |_|\___/|___/
+--------------------
+
+So Far So Good!
+
+== Automating RHEL Administration
+
+=== Why Automate my daily work?
+
+It is a good question. There are several reasons why automation could save my life as an administrator.
+
+But, let me be clear. My job is important as an administrator, and it could be even more important if I use my time and effort wisely to propose new ways of executing tasks making my company make more revenue. Isn't that be great?
+
+We are going to look at the different perspectives why automation is so important as far as a RHEL administration is concerned.
+
+=== Saving Time
+
+First and foremost, automation can be used to save time. If I save time doing every day work, I can do more, but this is only the tip of the iceberg.
+
+=== Get more control over my daily tasks
+
+Having a tool that does exactly what it is supposed to do, all the time, could give administrators peace of mind doing repetitive configuration and deployment tasks. More control over my daily job with more confidence. 
+
+=== Minimize errors
+
+After a playbook is created and test it, it will be executed in exactly the same way, all the time. No human errors due to misspelled commands or enter key error.
+
+=== Execute complex tasks in a consistent way
+
+Every time a procedure is executed, no matter how complex it is, administrators could expect the same results, in one server or in a huge amount of them.
+
+=== Scale in huge platforms
+
+Ansible can assist to execute tasks in 1, 2 or n servers, locally or remotely located. The real power of ansible is the ability to delegate complex and extensive jobs to the angine in order to it to take care of the execution cna completion.
+Document well my job
+
+One of the nice features of ansible is that the output of every playbook executed could be used to document what happened in every run. This is a proof of execution that can be used to create more complex management document.
+
+=== Get more confident in what I am doing in a production environment
+
+When we often execute playbooks with predecible results every time, is natural to be confident about tasks otherwise need to be done manually and are prone to human errors.
+
+== Configuring some defaults
+
+For this workshop we need to create some defaults in order to have the basics to execute playbooks in a straightforward manner.
+
+=== Creating the ansible path and inventory
+
+[source,bash]
+----------------------
+# mkdir /root/ansible
+# cd /root/ansible
+# echo  $'[managedhosts] \nip_address' > inventory
+
+The ipaddress must be replaced by the ip of the managed hosts. 
+
+In the example below the ip address of the managed host in the lab is 192.168.56.119.
+
+# echo  $'[managedhosts] \n192.168.56.119' > inventory
+
+# more inventory
+[managedhosts]
+192.168.56.119
+----------------------
+
+== Automating an Application Deployment
+
+=== Why?
+
+Be repeatable when an application deployment is concern is crucial to survive in this automated world, where virtualization and cloud naive applications have taken control of a lot of aspects of our data centers.
+
+Having the ability to deploy complex layouts and architectures in a virtualized environment, on-premise or not, is part of being at the speed of the 4th revolution.
+
+Automated scalability in much cases is the name of the game, so whether it is the first time the application is deployed or several instances are needed to keep up with the demand, we need tools that keep us apart from the time consuming and error prone manual tasks.
+
+This workshop has the main goal of showing you how to use ansible to deploy an application, from the RHEL management perspective.
+
+Let’s get our hands dirty from now on...
+
+=== The application
+
+For this workshop we are going to implement a simple yet powerful general purpose application that could be used for multiple purposes. This app is a simple service provider that can be customized for any requirement in which exists the necessity of access the services to obtain something… bare with me, so I am going to explain this in detail.
+
+=== The architecture
+
+We are going to implement one layer: the conversational domain, that is going to be a simple chatbot, and a load balancer, to implement a kind of scalable architecture..
+
+image::apparchitecture.png[Architecture Diagram]
+
+=== The Chatbot
+
+This layer implements a simple logic to give a conversational platform for learning the concepts of ansible. The corpus is the Ansible glossary that can be found here: https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html
+
+The initial deployment will be with only one instance, CHB1, that conforms a conversational domain, in this case Ansible Glossary.
+
+When more (simulation) users need to access the platform, the subsequent deployments implements other instances for coping with the demand keeping the performance.
+
+In an elastic fashion, we can shutdown or instantiate as meany chatbot instances as needed… in an automatic way.   
+The Balancer
+
+This is a simple instance which implements a round robin scheme to access the chatbot. This layer is based on web server instance that expose an api to interact with the chatbot through port 8080.. 
+
+The communication between this web service and the chatbot engine is through a service exposed by the chatbot instances through sockets between ports 5671 to 5675.
+
+
+
+
+
+
+
+
+
+
+
