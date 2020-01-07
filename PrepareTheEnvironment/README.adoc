@@ -7,18 +7,7 @@
 
 == Description
 
-In this workshop we will be showing an important part of any platform administration, which is the operating system management. A lot of the tasks with the operating system are manual and repetitive, and impose several disadvantages regarding time spent in such activities, complexity associated to management procedures, lack of control in more complex activities and errors in which the administrator could be involved due to the human nature.
-
-Much has been said and written about the new hybrid and multicloud era. At this moment in time, manual tasks supported by human intervention could be the wrong way to transit, just because the scale and complexity requires assistance to be efficient enough to keep the pace of growing.
-
-The Ansible tool, as described officially defines  "a radically simple IT automation engine that automates cloud provisioning, configuration management, application deployment, intra-service orchestration, and many other IT needs." 
-
-This workshop is aimed to show you how easy is to plan and use ansible for automating the most common administration tasks RHEL could require in a day by day basis.
-
-Also, not so common tasks will be shown in order to give you the tools for your daily work in the datacenter.
-
-== Audience
-IT Managers, Architects and technical staff who operates Linux
+This instruction could be useful to create a RHEl environment for development purposes. 
 
 == Create a virtual Environment for the workshop
 
@@ -51,11 +40,11 @@ https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machi
 * Rename the MV to “RHEL8x control node”.
 * Boot the server
 * Login with user: root, password: ltodemos
-* Change the hostname
+* Change the hostname to rhelserver
 
 [source,bash]
 -----------------
-# hostnamectl set-hostname controlhost
+# hostnamectl set-hostname rhelserver
 -----------------
 
 * Register the server with your development account
@@ -72,32 +61,9 @@ https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machi
 # yum update
 -----------------
 
-=== Clone the machine to create a managed host server
+=== Find out the IP address
 
-* Do a poweroff from the rhel server already installed
-* From VirtualBox, select the MV and clone it executing (menu) machine/clone or (Ctrl-O) to clone the server to be a managed host.
-* Define a new MAC address policy to a “generate a new MAC address for all network adapters”
-* Change the name to “RHEL8x managed host”.
-* Boot the server
-* Login with user: root, password: ltodemos
-* Change the hostname
-
-[source,bash]
------------------
-# hostnamectl set-hostname managedhost
------------------
-* Register the server with your development account
-
-[source,bash]
------------------
-# subscription-manager register --auto-attach
------------------
-
-* Introduce your username and password with your subscription credentials.
-
-=== Find out the IP addresses of both servers
-
-Login in both servers and check their IP addresses issuing
+Login in and check their IP address issuing
 
 [source,bash]
 -----------------
@@ -113,9 +79,7 @@ Fill the table below.
 [options="header"]
 |=======================
 |Server | ip address
-|Control host |
-|Managed host |
 |=======================
 
 [NOTE]
-At this point you have 2 servers, a control host and a managed host. These are the servers you need to follow this workshop.
+At this point you have a RHEL 8 server totally operational.
