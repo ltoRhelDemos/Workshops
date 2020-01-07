@@ -58,7 +58,7 @@ https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machi
 # hostnamectl set-hostname controlhost
 -----------------
 
-* Register the server with your development account
+* Register the server with your development account. You can get the developer subscription at https://developers.redhat.com/register.
 
 [source,bash]
 -----------------
