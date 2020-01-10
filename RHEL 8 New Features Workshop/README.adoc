@@ -1,0 +1,79 @@
+:scrollbar:
+:data-uri:
+:toc2:
+:imagesdir: images
+
+= RHEL 8 New Features workshop - Latam Tech Office Workshop series
+
+:numbered:
+
+== Description
+
+This workshop is aimed to show to customers and partners the main features of RHEL 8 in a very dynamic and inmmersive way. 
+
+We have three main dynamisc in each feature showed.
+
+* Theory with Whiteboarding
+* Practice in a RHEL instance
+* Discussion of the feature in a real world use case
+
+Duration: 3.5h
+
+Audience: IT Managers, Architects and technical staff who operates Linux
+
+== Application Streams
+
+=== Description
+
+With the introduction of Red Hat Enterprise Linux 8 (RHEL 8) Red Had has tried to greatly simplify the layout of the content available in Red Hat Enterprise Linux. The main repository, BaseOS, provides the parts of the distribution that give you a running user space on physical hardware, a virtual machine, a cloud instance or a container. The Application Stream (AppStreams) repository provides all the applications you might want to run in a given userspace. The Supplemental repository provides other software that has special licensing. 
+
+=== Whiteboarding
+
+Use a whiteboard to explain how base os and appstreams are separated and how this helps to have better control and maintainability of kernel and user spaces.
+
+=== Pre Execution
+Use a whiteboard to explain how base os and appstreams are separated and how this helps to have better control and maintainability of kernel and user spaces.
+Execution
+
+*Show the repos*
+
+# sudo yum repolist
+# sudo subscription-manager repos --list-enabled
+
+*Enable or disable repos*
+
+# sudo subscription-manager repos --disable=repoID
+# sudo subscription-manager repos --enable=repoID
+
+*Show the modules available*
+# sudo yum module list
+
+*Example installing python 2.7 along with python 3.6*
+
+# sudo yum module info python27
+# sudo yum module install python27
+
+*Other example installing nodejs*
+
+# yum module install nodejs:8/development
+# yum module enable nodejs
+# yum module disable nodejs
+# yum module remove nodejs:8/minimal
+
+=== Post Execution
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+Additional recommended exercises for the customer
+
+*Install postgresql 9.6* 
+
+# yum module disable postgresql
+# yum module install postgresql:9.6
+# yum module list
+
+*Now switch to version 10.0*
+
+# yum module disable postgresql
+# yum module install postgresql:10/client
+# yum module list
+
