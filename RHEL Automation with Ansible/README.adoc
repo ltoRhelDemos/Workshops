@@ -3,6 +3,8 @@
 :toc2:
 :imagesdir: images
 
+= RHEL Automation with Ansible - Latam Tech Office Workshop series
+
 :numbered:
 
 == Description
