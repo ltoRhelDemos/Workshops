@@ -80,9 +80,8 @@ Execution
 === Post Execution
 
 Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
-Additional recommended exercises for the customer
 
-=== Additional excercises
+=== Additional recommended exercises for the customer
 
 *Install postgresql 9.6* 
 
@@ -101,4 +100,74 @@ Additional recommended exercises for the customer
 # yum module install postgresql:10/client
 # yum module list
 ------------------
+
+== WEB CONSOLE
+
+=== Description
+
+The Red Hat Enterprise Linux web console is an open source project called Cockpit that provides a user-friendly web interface allowing for the remote administration of servers. Starting with Red Hat Enterprise Linux 7, the cockpit package provides a powerful and extensible web console for system administration.
+
+=== Pre Execution
+
+Use a whiteboard to explain how web console could help to rhel administration. Explain the modularity and extensibility of the tool. 
+
+Explain for what these plugins could be used for.
+
+* cockpit-composer
+* cockpit-pcp
+* cockpit-dashboard
+* cockpit-machines
+* cockpit-session-recording
+
+=== Execution
+
+*Enabling repositories  in RHEL 7*
+
+[source, bash]
+------------------
+# subscription-manager repos --enable=rhel-7-server-extras-rpms
+# subscription-manager repos --enable=rhel-7-server-optional-rpms
+------------------
+
+*Installation*
+
+[source, bash]
+------------------
+# yum install cockpit cockpit-dashboard
+------------------
+
+*Enabling cockpit*
+
+[source, bash]
+------------------
+# firewall-cmd --add-port=9090/tcp
+# firewall-cmd --add-port=9090/tcp --permanent 
+# systemctl enable cockpit.socket
+# systemctl start cockpit.socket
+------------------
+
+Show the tool explaining every aspect of web console accessing it at https://host_ip:9090
+
+*Post Execution* 
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+
+A good next step is (from a customer perspective) creating a RHEL 8 VM to centralized cockpit using cockpit-dashboard and manage all other servers RHEL 7.4 and above and 8 servers.
+
+*Additional recommended exercises for the customer*
+
+Access Web Console and execute the following steps
+Create a Raid 1 volume with 2x8GB disks configured in the VM
+Select the volume and format it with XFS and a define a mount point
+Mount the newly created volume
+Access the terminal from from web Console
+
+[source, bash]
+------------------
+# lvm
+# lsblk
+# df -kh
+------------------
+
+
 
