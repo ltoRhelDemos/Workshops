@@ -32,33 +32,50 @@ With the introduction of Red Hat Enterprise Linux 8 (RHEL 8) Red Had has tried t
 Use a whiteboard to explain how base os and appstreams are separated and how this helps to have better control and maintainability of kernel and user spaces.
 
 === Pre Execution
+
 Use a whiteboard to explain how base os and appstreams are separated and how this helps to have better control and maintainability of kernel and user spaces.
 Execution
 
 *Show the repos*
 
+[source, bash]
+------------------
 # sudo yum repolist
 # sudo subscription-manager repos --list-enabled
+------------------
 
 *Enable or disable repos*
 
+[source, bash]
+------------------
 # sudo subscription-manager repos --disable=repoID
 # sudo subscription-manager repos --enable=repoID
+------------------
 
 *Show the modules available*
+
+[source, bash]
+------------------
 # sudo yum module list
+------------------
 
 *Example installing python 2.7 along with python 3.6*
 
+[source, bash]
+------------------
 # sudo yum module info python27
 # sudo yum module install python27
+------------------
 
 *Other example installing nodejs*
 
+[source, bash]
+------------------
 # yum module install nodejs:8/development
 # yum module enable nodejs
 # yum module disable nodejs
 # yum module remove nodejs:8/minimal
+------------------
 
 === Post Execution
 
