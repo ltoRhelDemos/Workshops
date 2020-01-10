@@ -82,15 +82,23 @@ Execution
 Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
 Additional recommended exercises for the customer
 
+=== Additional excercises
+
 *Install postgresql 9.6* 
 
+[source, bash]
+------------------
 # yum module disable postgresql
 # yum module install postgresql:9.6
 # yum module list
+------------------
 
 *Now switch to version 10.0*
 
+[source, bash]
+------------------
 # yum module disable postgresql
 # yum module install postgresql:10/client
 # yum module list
+------------------
 
