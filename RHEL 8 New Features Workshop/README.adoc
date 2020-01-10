@@ -148,13 +148,13 @@ Explain for what these plugins could be used for.
 
 Show the tool explaining every aspect of web console accessing it at https://host_ip:9090
 
-*Post Execution* 
+=== Post Execution
 
 Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
 
 A good next step is (from a customer perspective) creating a RHEL 8 VM to centralized cockpit using cockpit-dashboard and manage all other servers RHEL 7.4 and above and 8 servers.
 
-*Additional recommended exercises for the customer*
+=== Additional recommended exercises for the customer
 
 Access Web Console and execute the following steps
 Create a Raid 1 volume with 2x8GB disks configured in the VM
@@ -168,6 +168,80 @@ Access the terminal from from web Console
 # lsblk
 # df -kh
 ------------------
+
+== SESSION RECORDINGS
+
+=== Description
+
+The session recording solution is provided within Red Hat Enterprise Linux 8 and it is based on the tlog package. The tlog package and its associated web console session player provide you with the ability to record and playback user terminal sessions. You can configure the recording to take place per user or user group via the SSSD service. All terminal input and output is captured and stored in a text-based format in the system journal.
+
+=== Pre Execution
+
+Use a whiteboard to explain for what session recordings can be used. Make customer understand how tlog and SSSD comes into play and the formats in which the sessions are recorded.
+
+=== Execution
+
+*Installation*
+
+[source, bash]
+------------------
+# yum install tlog
+#  yum install cockpit-session-recording
+# systemctl start cockpit.socket
+# systemctl enable cockpit.socket --now
+------------------
+
+Using SSSD to control what sessions to record
+
+Modify sssd-session-recording.conf file
+
+[source, bash]
+------------------
+vi /etc/sssd/conf.d/sssd-session-recording.conf
+------------------
+
+Look for [session_recording]
+scope = some 
+users = example1, example2
+groups = examples
+Scope could be none | some | all
+
+*Exercise*
+
+* Using Web Console create a user called recording then log-in with that account
+* Modify using gui or file with scope some the users with recording
+* See the little byte video to see how to conduct the demonstration from now on.
+
+Optional: Exporting recorded sessions to a file
+
+[source, bash]
+------------------
+# yum install systemd-journal-remote
+# journalctl -o export | systemd-journal-remote -o /tmp/dir/example.journal -
+------------------
+
+Optional: playing back the session using tlog-play
+
+Find out the session id
+
+[source, bash]
+------------------
+# journalctl -o verbose | grep -i \”rec\”
+# tlog-play -r journal -M TLOG_REC=<number>
+------------------
+
+=== Post Execution
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+
+Other actions could involve security and remediation groups for showing how session recordings could help to auditories, forensic, documentation and education.
+
+== VIRTUAL DATA OPTIMIZER
+
+=== Description
+
+Virtual Data Optimizer (VDO) provides inline data reduction for Linux in the form of deduplication, compression, and thin provisioning. When you set up a VDO volume, you specify a block device on which to construct your VDO volume and the amount of logical storage you plan to present.
+
 
 
 
