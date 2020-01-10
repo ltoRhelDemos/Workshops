@@ -242,6 +242,248 @@ Other actions could involve security and remediation groups for showing how sess
 
 Virtual Data Optimizer (VDO) provides inline data reduction for Linux in the form of deduplication, compression, and thin provisioning. When you set up a VDO volume, you specify a block device on which to construct your VDO volume and the amount of logical storage you plan to present.
 
+=== Pre Execution
+
+Use a whiteboard to explain how VDO can be used for optimizing volumes, create appliances and talk a little on how the device mapper is in place in the disk architecture for creating other more high level disk structures in which vdo will sit on.
+
+Talk about  the UDS Kernel Module and the VDO Kernel Module as fundamental parts of the service.
+
+Comment on possible use cases like VM and container storing, non structured data, logs consolidation and backups. 
+
+=== Execution
+
+*Installation*
+
+[source, bash]
+------------------
+# yum install vdo kmod-kvdo
+# systemctl start vdo
+# systemctl enable vdo
+------------------
+
+Using Web Console looking from demonstrating how easy is to create a VDO volume on top of a RAID 1 volume.
+
+* Create a RAID 1 volume using the 2x8GB disks in the VM
+* Create a VDO Volume on top of the RAID 1 volume just created
+* Create a XFS filesystem on the vdo volume
+* Take it to the limit with the following script on the data mount point
+
+[source, bash]
+------------------
+# while true; do file=`date +'%Y%m%d_%H%M%S_%N'`;  echo $file; journalctl -o verbose >> $file; ps -ef >> $file; done
+------------------
+
+* Monitor the utilization
+
+[source, bash]
+------------------
+# clear; while true; do df -kh; echo ---;sudo vdostats --hu; echo “---”; ls | wc -l; sleep 5; clear; done
+------------------
+
+=== Post Execution
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+
+What escenarios could be considered for implementing VDO?. Logs Consolidation?. Session Recordings Consolidation?, Backups?.
+
+== IMAGE BUILDER
+
+=== Description
+
+Red Hat Enterprise Linux 8 ships a new tool, called Image Builder, that allows you to create custom Red Hat Enterprise Linux system images in a variety of formats. These include compatibility with major cloud providers and virtualization technologies available in the market. As a result, it enables you to quickly spin up new Red Hat Enterprise Linux (RHEL) systems in different platforms, according to your requirements.
+
+=== Pre Execution
+
+Use a whiteboard to explain how image builder could be helpful to create and maintain rhel images. 
+
+Tell possible scenarios and use cases for creating images and the benefits of using such technology to be more agile in delivering OS.
+
+=== Execution
+
+*Installation* 
+
+[source, bash]
+------------------
+# yum install lorax-composer composer-cli cockpit-composer bash-completion
+# systemctl enable --now lorax-composer.socket
+# systemctl enable cockpit.socket (optional)
+# firewall-cmd --add-service=cockpit && firewall-cmd --add-service=cockpit --permanent (optional)
+------------------
+
+*Create a blueprint called python2* adding python2 and cockpit. Then create an image based on vmdk using cockpit gui.
+
+Also, the procedure followed con cockpit could be reproduced using the command line:
+
+[source, bash]
+------------------
+# composer-cli blueprints list
+# composer-cli blueprints save test (generate test.toml file)
+------------------
+
+*Add a user*
+
+[source, bash]
+------------------
+[[customizations.user]]
+name = "root"
+description = "root user account w/ ltodemos passw"
+password = "$6$BS7eu2gKUKqCmoYk$nA1b1IcqaTJLGW1ZHhumLlhBu5q69d4OeNUgtOVIqM6ah17B/g4vQT5Gggm8JiungeoHEOxODx7bAUYu1uyDH1"
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHmjYFDBCrB1mgacb47t+y8UXSscnJl2WWlJluzqtInpT6At0nwqtdV3niYTHxju7e/As4MX3iwC8ubVp2DH8qXgvorDliV9SsIQTqvNKlwGkxZ5cqfYFlV4SUuS7tVTOg0yIqVSddZ2t0Sjmdp3PF7zrp6ayH7a9BBA0/8HQXU/lpdk76SGYL9L8PHOtMYnxtmr+WduoJ+X9zO9d3SUypX36NleFqhlpr1UfnSSkFO/PfRYUhry6HEmUk3Da7aS9hNS0lX/j6uf9RnSrNSzquVezyVMgsRnJ+5xr7KyhwtEig//Wr/j8TWmqvj645IWXTmj6Jw4uvi26bEORZVM5x ricardo@localhost"
 
 
+[[customizations.user]]
+name = "lto"
+description = lto user"
+password = "$6$BS7eu2gKUKqCmoYk$nA1b1IcqaTJLGW1ZHhumLlhBu5q69d4OeNUgtOVIqM6ah17B/g4vQT5Gggm8JiungeoHEOxODx7bAUYu1uyDH1"
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHmjYFDBCrB1mgacb47t+y8UXSscnJl2WWlJluzqtInpT6At0nwqtdV3niYTHxju7e/As4MX3iwC8ubVp2DH8qXgvorDliV9SsIQTqvNKlwGkxZ5cqfYFlV4SUuS7tVTOg0yIqVSddZ2t0Sjmdp3PF7zrp6ayH7a9BBA0/8HQXU/lpdk76SGYL9L8PHOtMYnxtmr+WduoJ+X9zO9d3SUypX36NleFqhlpr1UfnSSkFO/PfRYUhry6HEmUk3Da7aS9hNS0lX/j6uf9RnSrNSzquVezyVMgsRnJ+5xr7KyhwtEig//Wr/j8TWmqvj645IWXTmj6Jw4uvi26bEORZVM5x ricardo@localhost"
+home = "/home/lto/"
+shell = "/usr/bin/bash"
+groups = ["users", "wheel"]
+------------------
+
+Use this command to create the hash for the password
+
+[source, bash]
+------------------
+# python3 -c "import crypt, getpass; print(crypt.crypt(getpass.getpass(), crypt.METHOD_SHA512))"
+------------------
+
+*Push the configuration*
+
+[source, bash]
+------------------
+# composer-cli blueprints push python2.toml
+------------------
+
+*Create the image*
+
+[source, bash]
+------------------
+# composer-cli compose start python2 vmdk
+------------------
+
+*Check the status*
+
+[source, bash]
+------------------
+# composer-cli compose status
+# journalctl -fu lorax-composer (for monitoring activity)
+------------------
+
+*When Finished create the image*
+
+[source, bash]
+------------------
+# composer-cli compose image UUID (taken from status)
+------------------
+
+=== Additional recommended exercises for the customer
+
+* Create a postgresql blueprint
+* From this blueprint create a vmdk image and import it on virtualbox, then start the VM
+
+=== Post Execution
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+
+== CONTAINERS OCI COMPLIANT
+
+=== Description
+
+The docker package is replaced by the Container Tools module, which consists of Podman, Buildah, Skopeo and several other tidbits. These tools are compatible with the OCI specifications which means they can find, run, build and share containers with other tools that target the OCI standards including Docker CE, Docker EE, Kata Containers, CRI-O, and other container engines, registries, and tools. You can build with Buildah, and run with CRI-O. You can copy images from an AWS container registry to a local Podman instance. The OCI standards offer greater flexibility and choice.
+
+=== Pre Execution
+
+Use whiteboard to show how podman can be used instead of docker for creating, pulling and executing containers.
+
+It's important to show the single point of failure docker daemon impone to customer and also the security issues related to the execution of containers at root level.
+
+Talk about OCI as the foundation of having tools for working with a standard that guarantee compatibility, functioning and stability in the container world.
+
+=== Execution
+
+*Installation*
+
+[source, bash]
+------------------
+# yum module list
+# yum module install container-tools
+------------------
+
+Look at /etc/containers/registries.conf and show the registries
+
+Registry.redhat.io, docker.io, quay.io
+
+*Login on redhat*
+
+[source, bash]
+------------------
+# podman login registry.redhat.io
+------------------
+
+*Look for nextcloud container*
+
+[source, bash]
+------------------
+#podman search nextcloud
+skopeo inspect docker://docker.io/library/nextcloud
+------------------
+
+*Pulling the container*
+
+[source, bash]
+------------------
+# podman pull docker://docker.io/library/nextcloud
+------------------
+
+*Run the container*
+
+[source, bash]
+------------------
+# podman run -d -p 8080:80 nextcloud
+# Podman ps
+# Podman images
+------------------
+
+*Access nextcloud http://host:8080*
+
+Make a little tour, *create another nextcloud account* and re-access with it
+
+*Create a container as a very basic example*
+
+Create a Dockerfile in a folder
+
+[source, bash]
+------------------
+# vim Dockerfile
+FROM docker.io/library/alpine
+ADD counting /usr/local/bin/counting
+CMD "/usr/local/bin/counting"
+------------------
+
+*Create a basic script called counting in the folder *
+
+[source, bash]
+------------------
+#vim counting
+
+date
+echo “Started"
+t=1
+while true; do
+   echo "counting: "$t
+   sleep 1
+   let t=t+1
+   if [[ $t -gt 9 ]]; then
+      break
+   fi
+done
+echo "Finished!"
+
+# chmod a+x counting
+# buildah bud -t counting .
+# podman run counting
+------------------
+
+The script should run flawlessly
 
