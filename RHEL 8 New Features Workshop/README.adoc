@@ -487,3 +487,117 @@ echo "Finished!"
 
 The script should run flawlessly
 
+=== Additional recommended exercises for the customer
+
+Install podman-docker to emulate de cli of docker using podman as an engine.
+
+[source, bash]
+------------------
+# yum install podman-docker
+------------------
+
+Run some docker commands
+
+Run a ubi (universal binary image) of rhel 7 directly from red hat
+
+[source, bash]
+------------------
+# podman run --rm -it registry.access.redhat.com/ubi7/ubi-minimal:latest /bin/bash
+------------------
+
+Verify the version
+
+[source, bash]
+------------------
+# cat /etc/redhat-release
+------------------
+
+Check the number of packages installed
+
+[source, bash]
+------------------
+# rpm -qa | wc -l
+------------------
+
+Exit container (Ctrl-D)
+
+Compare the number of packages with your host
+
+[source, bash]
+------------------
+# rpm -qa | wc -l
+------------------
+
+=== Post Execution
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+
+UBI can be used to create and re-distribute a container with the application needed for free. How could a customer use this offering from redhat?.
+
+== IN-PLACE UPGRADES
+
+=== Description
+
+With RHEL 8 some tools are available for upgrade from version 7.6 to 8 with almost no intervention.
+
+=== Pre Execution
+
+Use a whiteboard to explain how in-place upgrade works and how it could be helpful to go to version 8.
+
+Explain a possible scenario with leapp and boom to create a snapshot to have a secure rollback to RHEL 7.
+
+=== Execution
+
+Show the video leapp tool + boom boot manager (activate closed caption) at https://www.youtube.com/watch?v=y6v3JIIYpGA
+
+=== Additional recommended exercises for the customer
+
+* Clone a DEV VM installed with RHEL 7.6
+* Follow the procedures explained in this Demo Drive to test the leapp and boom tools for migrating to RHEL 8
+
+=== Post Execution
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+
+== INSIGHTS
+
+=== Description
+
+Proactively identify and remediate threats to security, performance, availability, and stability with Red Hat® Insights—with predictive analytics, avoid problems and unplanned downtime in your Red Hat environment.
+
+=== Pre Execution
+
+Use a whiteboard to explain how Insights uses and send information from server to SaaS. Depict a simple architecture, talk about deployment of the client, registration, possible integration with Satellite to centralize access and expose only 1 server to the internet.
+
+Explain in detail why the SaaS service is Predictive, Proactive, Diagnostic, Descriptive and Prescriptive. 
+
+Show the classification the tool makes in performance, availability, stability and security and establish the importance of the prioritization proposed by insights showing the criticity, impact, likelihood and risk of change.
+
+=== Execution
+
+*Installation*
+
+[source, bash]
+------------------
+# sudo yum install insights-client
+# sudo insights-client --register
+# sudo insights-client --unregister (optional)
+------------------
+
+*Access the Portal*
+
+https://cloud.redhat.com
+
+Demonstrate the tool, go to the main aspect of Insights showing the descriptive behavior, then signostic, them prescriptive and finally show how the customer can automate remediations.
+
+=== Additional recommended exercises for the customer
+
+* Create a RHEL 8 VM with insights installed.
+* register some other dev/test MVs to see what insights propos
+
+=== Post Execution
+
+Get from customer insight and feedback of how they could use this kind of features in their day by day operation, looking for real cases to be implemented. Stimulate a conversation of max 5 minutes relating to this topic.
+
+Go beyond. Establish a new meeting for installing a pilot or for helping the customer to install in a few servers as a guidance.
+
