@@ -21,6 +21,17 @@ Duration: 3.5h
 
 Audience: IT Managers, Architects and technical staff who operates Linux
 
+== Pre-Requisites
+
+A RHEL 8.1 server installed as a virtual machine either on cloud or on-premise with any virtualizer. In https://github.com/ltoRhelDemos/Workshops/tree/master/PrepareTheEnvironment there is an example with virtualbox, which is very simple to install in a laptop.
+
+*Resources*
+
+CPU: 1 core
+MEM: 1 Gb
+DISK: 15 Gb thinned provissioned
+EXTRA DISKS: 2x 8 Gb Sata (virtualized)
+
 == Application Streams
 
 === Description
