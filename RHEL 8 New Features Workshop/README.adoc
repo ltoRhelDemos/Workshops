@@ -168,10 +168,11 @@ A good next step is (from a customer perspective) creating a RHEL 8 VM to centra
 === Additional recommended exercises for the customer
 
 Access Web Console and execute the following steps
-Create a Raid 1 volume with 2x8GB disks configured in the VM
-Select the volume and format it with XFS and a define a mount point
-Mount the newly created volume
-Access the terminal from from web Console
+
+* Create a Raid 1 volume with 2x8GB disks configured in the VM
+* Select the volume and format it with XFS and a define a mount point
+* Mount the newly created volume
+* Access the terminal from from web Console
 
 [source, bash]
 ------------------
@@ -197,7 +198,7 @@ Use a whiteboard to explain for what session recordings can be used. Make custom
 [source, bash]
 ------------------
 # yum install tlog
-#  yum install cockpit-session-recording
+# yum install cockpit-session-recording
 # systemctl start cockpit.socket
 # systemctl enable cockpit.socket --now
 ------------------
@@ -323,7 +324,7 @@ Tell possible scenarios and use cases for creating images and the benefits of us
 
 *Create a blueprint called python2* adding python2 and cockpit. Then create an image based on vmdk using cockpit gui.
 
-Also, the procedure followed con cockpit could be reproduced using the command line:
+Also, the procedure followed with cockpit could be reproduced using the command line:
 
 [source, bash]
 ------------------
@@ -500,7 +501,7 @@ The script should run flawlessly
 
 === Additional recommended exercises for the customer
 
-Install podman-docker to emulate de cli of docker using podman as an engine.
+Install podman-docker to emulate the cli of docker using podman as an engine.
 
 [source, bash]
 ------------------
