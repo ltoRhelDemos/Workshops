@@ -689,6 +689,41 @@ In this stage we are sure all re pre-requisites are met to starting to create th
 
 === Create the Directory structure and copy the software
 
+[source,bash]
+----------------------
+# vim createChatbotDirectory
+- hosts: managedhosts
+  tasks:
+  - name: create the directory for hosting the software
+    file:
+      path: /root/chatbot
+      state: directory
+      mode: '0700'
+      
+# ansible-playbook createChatbotDirectory.yml -i inventory
+
+PLAY [managedhosts] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] ***************************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [create the directory for hosting the software] *********************************************************************************************************
+changed: [192.168.56.119]
+
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.56.119             : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+----------------------
+
+With and ad-hoc command we can check that the directory was created.
+
+[source,bash]
+----------------------
+# ansible managedhosts -m command -a "ls -ld /root/chatbot" -i inventory
+
+192.168.56.119 | CHANGED | rc=0 >>
+drwx------. 2 root root 6 Jan 13 17:38 /root/chatbot
+----------------------
+
 
 
 
