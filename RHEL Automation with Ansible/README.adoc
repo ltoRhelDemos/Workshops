@@ -439,7 +439,7 @@ For this workshop we are going to implement a simple yet powerful general purpos
 
 === The architecture
 
-We are going to implement one layer: the conversational domain, that is going to be a simple chatbot, and a load balancer, to implement a kind of scalable architecture..
+We are going to implement one layer: the conversational domain, that is going to be a simple chatbot engine and a web inrterface.
 
 image::apparchitecture.png[Architecture Diagram]
 
