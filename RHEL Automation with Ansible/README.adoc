@@ -447,17 +447,19 @@ image::apparchitecture.png[Architecture Diagram]
 
 This layer implements a simple logic to give a conversational platform for learning the concepts of ansible. The corpus is the Ansible glossary that can be found here: https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html
 
-The initial deployment will be with only one instance, CHB1, that conforms a conversational domain, in this case Ansible Glossary.
+=== Download the BOT src
 
-When more (simulation) users need to access the platform, the subsequent deployments implements other instances for coping with the demand keeping the performance.
+[source,bash]
+----------------------
+# cd /root/ansible/
+# git clone https://github.com/ltoRhelDemos/python-ansible-chatbot.git
+----------------------
 
-In an elastic fashion, we can shutdown or instantiate as meany chatbot instances as needed… in an automatic way.   
-The Balancer
+In the python-ansible-chatbot/src directory there are to python executable files.
 
-This is a simple instance which implements a round robin scheme to access the chatbot. This layer is based on web server instance that expose an api to interact with the chatbot through port 8080.. 
+* serviceProvider.py, which is the ansible chatbot engine.
 
-The communication between this web service and the chatbot engine is through a service exposed by the chatbot instances through sockets between ports 5671 to 5675.
-
+* webChat.py, which is the web interface for accessing the service or to use the exposed restful API.
 
 
 
