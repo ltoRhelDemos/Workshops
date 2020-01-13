@@ -515,7 +515,7 @@ Then we define the tasks that are going to be executed in this playbook.
 - name: python36
 - state: latest
 
-* Then, the following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numeric processing, tflearn and tensorflow for applying artitial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The pip module only needs the name of the library that needs to be installed.
+* Then, the following actions are related to the installation of some required libraries. In this case nltk for natural language processing, tflearn and tensorflow for applying artitial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The pip module only needs the name of the library that needs to be installed.
 
 
 [source,bash]
@@ -546,6 +546,151 @@ PLAY RECAP *********************************************************************
 192.168.56.119             : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 
 ----------------------
+
+This playbook was executed starting gathering facts. This module is automatically called by playbooks to gather useful variables about remote hosts that can be used in playbooks.
+
+In fact, we can execute as an ad-hoc command using ansible. For example.
+
+[source,bash]
+----------------------
+# ansible managedhosts -m gather_facts --tree /tmp/facts -i ./inventory
+
+192.168.56.119 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_all_ipv4_addresses": [
+            "10.0.2.15",
+            "192.168.56.119",
+            "192.168.122.1"
+        ],
+        "ansible_all_ipv6_addresses": [
+            "fe80::a36:3b15:8f03:59a9",
+            "fe80::7957:b5e7:19e1:e2ea",
+            "fe80::5c76:f9ff:7511:26c7"
+        ],
+        "ansible_apparmor": {
+            "status": "disabled"
+        },
+        "ansible_architecture": "x86_64",
+        "ansible_bios_date": "12/01/2006",
+        "ansible_bios_version": "VirtualBox",
+        "ansible_cmdline": {
+            "BOOT_IMAGE": "(hd0,msdos1)/vmlinuz-4.18.0-147.el8.x86_64",
+            "quiet": true,
+            "rd.lvm.lv": "rhel_yogurtu/swap",
+            "resume": "/dev/mapper/rhel_yogurtu-swap",
+            "rhgb": true,
+            "ro": true,
+            "root": "/dev/mapper/rhel_yogurtu-root"
+        },
+        "ansible_date_time": {
+            "date": "2020-01-13",
+            "day": "13",
+            "epoch": "1578951976",
+            "hour": "16",
+            "iso8601": "2020-01-13T21:46:16Z",
+...
+
+ "ansible_virbr0_nic": {
+            "active": false,
+            "device": "virbr0-nic",
+            "features": {
+                "esp_hw_offload": "off [fixed]",
+                "esp_tx_csum_hw_offload": "off [fixed]",
+                "fcoe_mtu": "off [fixed]",
+                "generic_receive_offload": "on",
+                "generic_segmentation_offload": "on",
+                "highdma": "off [fixed]",
+                "hw_tc_offload": "off [fixed]",
+                "l2_fwd_offload": "off [fixed]",
+                "large_receive_offload": "off [fixed]",
+                "loopback": "off [fixed]",
+                "netns_local": "off [fixed]",
+                "ntuple_filters": "off [fixed]",
+                "receive_hashing": "off [fixed]",
+                "rx_all": "off [fixed]",
+                "rx_checksumming": "off [fixed]",
+                "rx_fcs": "off [fixed]",
+                "rx_gro_hw": "off [fixed]",
+                "rx_udp_tunnel_port_offload": "off [fixed]",
+                "rx_vlan_filter": "off [fixed]",
+                "rx_vlan_offload": "off [fixed]",
+                "rx_vlan_stag_filter": "off [fixed]",
+                "rx_vlan_stag_hw_parse": "off [fixed]",
+                "scatter_gather": "on",
+                "tcp_segmentation_offload": "off",
+                "tls_hw_record": "off [fixed]",
+                "tls_hw_rx_offload": "off [fixed]",
+                "tls_hw_tx_offload": "off [fixed]",
+                "tx_checksum_fcoe_crc": "off [fixed]",
+                "tx_checksum_ip_generic": "off [requested on]",
+                "tx_checksum_ipv4": "off [fixed]",
+                "tx_checksum_ipv6": "off [fixed]",
+                "tx_checksum_sctp": "off [fixed]",
+                "tx_checksumming": "off",
+                "tx_esp_segmentation": "off [fixed]",
+                "tx_fcoe_segmentation": "off [fixed]",
+                "tx_gre_csum_segmentation": "off [fixed]",
+                "tx_gre_segmentation": "off [fixed]",
+                "tx_gso_partial": "off [fixed]",
+                "tx_gso_robust": "off [fixed]",
+                "tx_ipxip4_segmentation": "off [fixed]",
+                "tx_ipxip6_segmentation": "off [fixed]",
+                "tx_lockless": "on [fixed]",
+                "tx_nocache_copy": "off",
+                "tx_scatter_gather": "on",
+                "tx_scatter_gather_fraglist": "on",
+                "tx_sctp_segmentation": "off [fixed]",
+                "tx_tcp6_segmentation": "off [requested on]",
+                "tx_tcp_ecn_segmentation": "off [requested on]",
+                "tx_tcp_mangleid_segmentation": "off",
+                "tx_tcp_segmentation": "off [requested on]",
+                "tx_udp_segmentation": "off [fixed]",
+                "tx_udp_tnl_csum_segmentation": "off [fixed]",
+                "tx_udp_tnl_segmentation": "off [fixed]",
+                "tx_vlan_offload": "on",
+                "tx_vlan_stag_hw_insert": "on",
+                "vlan_challenged": "off [fixed]"
+            },
+            "hw_timestamp_filters": [],
+            "macaddress": "52:54:00:14:f3:61",
+            "mtu": 1500,
+            "promisc": true,
+            "timestamping": [
+                "tx_software",
+                "rx_software",
+                "software"
+            ],
+            "type": "ether"
+        },
+        "ansible_virtualization_role": "guest",
+        "ansible_virtualization_type": "virtualbox",
+        "discovered_interpreter_python": "/usr/libexec/platform-python",
+        "gather_subset": [
+            "all"
+        ],
+        "module_setup": true
+    },
+    "changed": false
+}
+
+----------------------
+
+Then it continues with the actions associated with libraries installation using the module pip. Each one is in charge of taking the library to the state desired, by default is "installed".
+
+At the end of the execution output you can notice a PLAY RECAP, which in turns indicates that 5 things were changed, in this case the installation of python 3.6 and the installation of nlt, tflearn, tensorflow and flask libraries.
+
+[source,bash]
+----------------------
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.56.119             : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+----------------------
+
+In this stage we are sure all re pre-requisites are met to starting to create the directories where our software will be installed.
+
+=== Create the Directory structure and copy the software
+
+
+
 
 
 
