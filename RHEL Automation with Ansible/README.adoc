@@ -439,13 +439,24 @@ For this workshop we are going to implement a simple yet powerful general purpos
 
 === The architecture
 
-We are going to implement one layer: the conversational domain, that is going to be a simple chatbot engine and a web inrterface.
-
 image::apparchitecture.png[Architecture Diagram]
 
-=== The Chatbot
+=== The webChat layer
 
-This layer implements a simple logic to give a conversational platform for learning the concepts of ansible. The corpus is the Ansible glossary that can be found here: https://docs.ansible.com/ansible/latest/reference_appendices/glossary.html
+This layer expose through the port 8080 a web interface to intercact with, also expose an api.
+
+* https://server_ip:8080/chat redirect to the app
+* https://server_ip:8080/api?chat&question= define a simple api to ask to the service
+
+Needless to say that it need the engine up&running for working properly.
+
+=== The engine layer
+
+This layer expose through the port 9095 via linux sockets a chat service.
+
+* server_ip:9095/chat can be interrogated with an ansible question.
+
+This service is essetial for the webChat layer to work properly.
 
 === Download the BOT src
 
@@ -461,8 +472,80 @@ In the python-ansible-chatbot/src directory there are to python executable files
 
 * webChat.py, which is the web interface for accessing the service or to use the exposed restful API.
 
+=== Playbook for install python 3.6 and check dependecies needed to run pour application
+
+The application needs python 3.6 installed in the managed host, so we need to create a playbook for installing the package but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an idempotent tool. It will look go get to the desired stated (installed) but this will happen if the library is not installed.
+
+Let's start for creating this playbook.
+
+[source,bash]
+----------------------
+# vim installChatBotPythonDependencies.yml
+
+- hosts: managedhosts
+  tasks:
+  - name: install python 3.6
+    yum:
+      name: python36
+      state: latest
+
+  - name: install nltk
+    pip:
+      name: nltk
+
+  - name: install tflearn
+    pip:
+      name: tflearn
+
+  - name: install tensorflow
+    pip:
+      name: tensorflow
+
+  - name: install flask
+    pip:
+      name: flask
+
+----------------------
+
+The hosts to interact with are which are present in the managedhosts group of the inventory created previously. In our cse is the ip 192.168.56.119.
+
+Then we define the tasks that are going to be executed in this playbook. 
+
+* At first place we need to be sure python 3.6 is installed, otherwise ansible need to make sure the latest version is installed properly. This is done by the yum module which needs the package name (in this case for python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
+- name: python36
+- state: latest
+
+* Then, the following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numeric processing, tflearn and tensorflow for applying artitial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The pip module only needs the name of the library that needs to be installed.
 
 
+[source,bash]
+----------------------
+# ansible-playbook installChatBotPythonDependencies.yml -i inventory
+
+PLAY [managedhosts] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] ***************************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [install python 3.6] ************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [install nltk] ******************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [install tflearn] ***************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [install tensorflow] ************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [install flask] *****************************************************************************************************************************************
+changed: [192.168.56.119]
+
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.56.119             : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+----------------------
 
 
 
