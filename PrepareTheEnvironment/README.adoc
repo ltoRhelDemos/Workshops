@@ -3,7 +3,7 @@
 :toc2:
 :imagesdir: images
 
-= How to create a RHEL 8 envirnment with a development subscription using Virtualbox
+= How to create a RHEL 8 environment with a development subscription using Virtualbox
 
 This How-to is aimed to help you in the creation of a virtual environment for the execution of Red Hat Enterprise Linux. The goal is to propose a totally operational OS environment that could be enabled with a development subscription from Red Hat.
 
