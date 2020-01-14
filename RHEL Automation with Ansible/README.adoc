@@ -969,9 +969,13 @@ In another ssh session to the managed host start the webChat.py program.
 
 For accessing the service, just start a browser and type http://192.168.56.119:8080/chat
 
+If everythiong is ok, the following interface will be shown in the browser.
+
 image::webChat.png[Ansible chatbot Web Interface]
 
+--- Automating the starting of the service
 
+Now that we are sure the application is installed and everything goes well its time to automate the service start at boot time of the managed host.
 
 
 
