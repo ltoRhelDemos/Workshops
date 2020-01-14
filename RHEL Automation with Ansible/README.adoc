@@ -458,7 +458,7 @@ This layer expose through the port 9095 via linux sockets a chat service.
 
 This service is essetial for the webChat layer to work properly.
 
-=== Download the BOT src
+=== Download the BOT src in the control host
 
 [source,bash]
 ----------------------
@@ -466,11 +466,117 @@ This service is essetial for the webChat layer to work properly.
 # git clone https://github.com/ltoRhelDemos/python-ansible-chatbot.git
 ----------------------
 
-In the python-ansible-chatbot/src directory there are to python executable files.
+In the python-ansible-chatbot/ directory there are to python executable files.
 
 * serviceProvider.py, which is the ansible chatbot engine.
 
 * webChat.py, which is the web interface for accessing the service or to use the exposed restful API.
+
+=== Creating the disk to install the application
+
+We need to copy the source code to our managed hosts. Every managed host has 2 devices on /dev for creating a volume group. Such is the case of:
+
+- /dev/sdb
+- /dev/sdc
+
+We need to create a volume group out of these two devices. This volume group will be named as *chatbotVG*. Inside this volume group we are going to create a logical volume named *data*. This logical volume will be mounted in a directory called /home/chatbot. This needs to be translated to a Playbook for automating this OS admin tasks in a consistend way.
+
+Let´s start by checking that boths devices are present
+
+[source,bash]
+---------------------
+---
+  - hosts: managedhosts
+    tasks:
+      - name: Setting variables.
+        set_fact: proceedWithInstallation="yes"
+
+      - name: Creating the chatbot disk facilities
+        block:
+          - name: checking for device /dev/sdb
+            set_fact: sdb_exists="yes"
+            when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdh"] 
+        rescue:
+          - name: Device /dev/sdb does not exists!
+            set_fact: sdb_exists="no"
+        always:      
+          - name: checking for device /dev/sdc  
+            block:
+              - name: checking sdc
+                set_fact: sdc_exists="yes"
+                when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdi"]
+            rescue: 
+              - name: Device /dev/sdc does not exists!
+                set_fact: sdc_exists="no"
+...
+---------------------
+
+Here we have coded a Block. A block able us to manage errors easilly. We start with hosts: managedhosts as inventory file has been set. For each ip present in the group managedhosts ansible will execute the actions after the tasks tag is implemented.
+
+We are going to check the hostvars content, which is populated when the gather_facts module is automatically executed. In this case we are chack the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"].
+
+We create a fact called sdb_exists witn "no" value, then if the dictionary key hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] is present we update the fact to "yes". The same procedure is made for sdc device.
+
+After we check the existance of our devices we proceed to create the volume group and logical volume to be mounted.
+
+[source,bash]
+--------------------
+...
+      - name: creating disk facilities
+        block:
+          - name: Creating chatbot Volume group.
+            lvg:
+              pvs: "/dev/sdb,/dev/sdc"
+              vg: "chatbotVG"
+              pesize: '8'
+              pv_options: '-Z y'
+              force: no
+              state: present
+
+          - name: Creating data Logical Volume.
+            lvol:
+              vg: "chatbotVG"
+              lv: "data"
+              size: 4g
+              active: yes
+              force: no
+              state: present
+
+          - name: Creating a XFS filesystem on lvm /dev/mapper/chatbotVG-data.
+            filesystem:
+              fstype: "xfs"
+              dev: "/dev/mapper/chatbotVG-data"
+              force: no
+
+          - name: Creating the mounting point /home/chatbot.
+            file:
+              path: "/home/chatbot/"
+              state: directory
+              mode: '0700'
+
+          - name: Mount the  filesystem.
+            mount:
+              path: "/home/chatbot"
+              src: "/dev/mapper/chatbotVG-data"
+              fstype: "xfs"
+              opts: rw,nosuid,noexec
+              state: mounted
+
+        rescue:
+          - name: chat installation results 
+            debug:
+              msg: "error creating disk facilities, the installation is aborted."
+              
+          - name: Creating proceedWithInstallation variable.
+            set_fact: proceedWithInstallation = "no"
+            
+        when:
+          - hostvars[inventory_hostname]['sdb_exists']
+          - hostvars[inventory_hostname]['sdb_exists']     
+--------------------
+          
+Another block is created with a *when clause* for execute the procedure if both devices are present.
+
 
 === Playbook for install python 3.6 and check dependecies needed to run pour application
 
