@@ -472,7 +472,7 @@ In the python-ansible-chatbot/ directory there are to python executable files.
 
 * webChat.py, which is the web interface for accessing the service or to use the exposed restful API.
 
-=== Creating the disk to install the application
+=== Creating the disk facilities for installing the application
 
 We need to copy the source code to our managed hosts. Every managed host has 2 devices on /dev for creating a volume group. Such is the case of:
 
@@ -487,35 +487,37 @@ Let´s start by checking that boths devices are present
 ---------------------
 ---
   - hosts: managedhosts
-    tasks:
-      - name: Setting variables.
-        set_fact: proceedWithInstallation="yes"
 
-      - name: Creating the chatbot disk facilities
+    tasks:
+
+      - name: check sdb
         block:
           - name: checking for device /dev/sdb
-            set_fact: sdb_exists="yes"
-            when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdh"] 
+            set_fact: proceedWithInstallation=yes
+            when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] 
         rescue:
           - name: Device /dev/sdb does not exists!
-            set_fact: sdb_exists="no"
-        always:      
-          - name: checking for device /dev/sdc  
-            block:
-              - name: checking sdc
-                set_fact: sdc_exists="yes"
-                when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdi"]
-            rescue: 
-              - name: Device /dev/sdc does not exists!
-                set_fact: sdc_exists="no"
+            set_fact: proceedWithInstallation=no
+          
+
+      - name: check sdc
+        block:
+          - name: checking for device /dev/sdc
+            set_fact: proceedWithInstallation=yes
+            when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdc"] 
+        rescue:
+          - name: Device /dev/sdc does not exists!
+            set_fact: proceedWithInstallation=no
+        when:
+          - hostvars[inventory_hostname]['proceedWithInstallation']
 ...
 ---------------------
 
-Here we have coded a Block. A block able us to manage errors easilly. We start with hosts: managedhosts as inventory file has been set. For each ip present in the group managedhosts ansible will execute the actions after the tasks tag is implemented.
+Here we have coded a Block. A block able us to manage errors easily. We start with hosts: managedhosts as in inventory file has been set. For each IP address present in the group managedhosts ansible will execute the actions after the tasks tag is implemented.
 
-We are going to check the hostvars content, which is populated when the gather_facts module is automatically executed. In this case we are chack the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"].
+We are going to check the hostvars content, which is populated when the gather_facts module is automatically executed. In this case we are checking the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] to determine if sdb exists.
 
-We create a fact called sdb_exists witn "no" value, then if the dictionary key hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] is present we update the fact to "yes". The same procedure is made for sdc device.
+In case one or both devices are not present, a fact is created called "proceedWithInstallation" that will be useful to execute the rest of our playbook. If this variable is set to no, further installation won't be executed.
 
 After we check the existance of our devices we proceed to create the volume group and logical volume to be mounted.
 
@@ -562,27 +564,34 @@ After we check the existance of our devices we proceed to create the volume grou
               opts: rw,nosuid,noexec
               state: mounted
 
-        rescue:
-          - name: chat installation results 
-            debug:
-              msg: "error creating disk facilities, the installation is aborted."
-              
-          - name: Creating proceedWithInstallation variable.
-            set_fact: proceedWithInstallation = "no"
-            
         when:
-          - hostvars[inventory_hostname]['sdb_exists']
-          - hostvars[inventory_hostname]['sdb_exists']     
+          - hostvars[inventory_hostname]['proceedWithInstallation']
+
+        
+      - name: Showing disk management results
+        debug: 
+          msg: "An error occured when trying to create the disk facilities for the chatbot, aborting installation! {{hostvars[inventory_hostname]['proceedWithInstallation']}}"
+        when:  
+          - not hostvars[inventory_hostname]['proceedWithInstallation']          
 --------------------
           
-Another block is created with a *when clause* for execute the procedure if both devices are present.
+Another block is created with a *when clause* for execute the procedure if both devices are present. 
 
+The playbook proceed with the following:
 
-=== Playbook for install python 3.6 and check dependecies needed to run pour application
+- Create a volume group called *chatbotVG* with sdc and sdc devices
+- Create a logical volume called *data* which size is 4 Gb.
+- Create a filesystem XFS on /dev/mapper/chatbotVG-data
+- Create a mount point called */home/chatbot*
+- Mount /dev/mapper/chatbotVG-data on /home/chatbot
 
-The application needs python 3.6 installed in the managed host, so we need to create a playbook for installing the package but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an idempotent tool. It will look go get to the desired stated (installed) but this will happen if the library is not installed.
+=== installing the application dependencies.
+
+The application needs python 3.6 installed in the managed host, so we need to create a playbook for installing the package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an idempotent tool. It will look to get to the desired stated (installed). If the package or the  libraries are already installed any of the actions assotiated will be executed.
 
 Let's start for creating this playbook.
+
+[NOTE] by now, we are creating independent Playbooks as big blocks as far as simplicity of explanation is concerned. Nevertheless at the end we will create a unique Playbook with all this isolated blocks for executing it in one piece.
 
 [source,bash]
 ----------------------
@@ -599,6 +608,10 @@ Let's start for creating this playbook.
     pip:
       name: nltk
 
+  - name: install numpy
+    pip:
+      name: numpy
+
   - name: install tflearn
     pip:
       name: tflearn
@@ -613,15 +626,16 @@ Let's start for creating this playbook.
 
 ----------------------
 
-The hosts to interact with are which are present in the managedhosts group of the inventory created previously. In our cse is the ip 192.168.56.119.
+The hosts to interact with are which are present in the managedhosts group of the inventory created previously. In our case is the IP Address 192.168.56.119.
 
 Then we define the tasks that are going to be executed in this playbook. 
 
-* At first place we need to be sure python 3.6 is installed, otherwise ansible need to make sure the latest version is installed properly. This is done by the yum module which needs the package name (in this case for python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
+* At first place we need to be sure python 3.6 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the yum module which needs the package name (in this case python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
+
 - name: python36
 - state: latest
 
-* Then, the following actions are related to the installation of some required libraries. In this case nltk for natural language processing, tflearn and tensorflow for applying artitial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The pip module only needs the name of the library that needs to be installed.
+* The following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numerical calculationsm, tflearn and tensorflow for applying artificial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The pip module only needs the name of the libraries that need to be installed.
 
 
 [source,bash]
@@ -793,44 +807,169 @@ PLAY RECAP *********************************************************************
 
 In this stage we are sure all re pre-requisites are met to starting to create the directories where our software will be installed.
 
-=== Create the Directory structure and copy the software
+=== Installing the software in its final destination
+
+For this, we have cloned the chatbot repository from github in python-ansible-chatbot directory. This directory contains all the sources and data needed to execute out service.
+
+The following Playbook syncronize the content of this directory with the remote /home/chatbot directory. Then all the necesary ports are openned for the free access to the service.
 
 [source,bash]
 ----------------------
-# vim createChatbotDirectory
-- hosts: managedhosts
-  tasks:
-  - name: create the directory for hosting the software
-    file:
-      path: /root/chatbot
-      state: directory
-      mode: '0700'
-      
-# ansible-playbook createChatbotDirectory.yml -i inventory
+# vim chatbotSyncSoftware.yml
+
+---
+  - hosts: managedhosts
+
+    tasks:
+    - name: copying chatbot software to chatbot servers 
+      synchronize:
+        src:  python-ansible-chatbot/
+        dest: /home/chatbot/
+
+    - name: Openning the webservice port 8080
+      firewalld:
+        port: 8080/tcp
+        permanent: yes
+        state: enabled
+
+    - name: Openning the engine port 9095
+      firewalld:
+        port: 9095/tcp
+        permanent: yes
+        state: enabled
+
+    - name: restarting the firewalld
+      service:
+        name: firewalld
+        state: restarted
+----------------------
+
+The first part copy all the software to the remote directory using the module Syncronize wich use rsync to do its magic. Then the ports 8080 and 9095 are opened uding the module firewalld wich needs the port, the protocol and if the action will be permanent. At the end we restart the firewall service util de module service.
+
+[source,bash]
+----------------------
+# ansible-playbook chatbotSyncSoftware.yml -i ./inventory
 
 PLAY [managedhosts] ******************************************************************************************************************************************
 
 TASK [Gathering Facts] ***************************************************************************************************************************************
 ok: [192.168.56.119]
 
-TASK [create the directory for hosting the software] *********************************************************************************************************
+TASK [copying chatbot software to chatbot servers] ***********************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Openning the webservice port 8080] *********************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Openning the engine port 9095] *************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [restarting the firewalld] ******************************************************************************************************************************
 changed: [192.168.56.119]
 
 PLAY RECAP ***************************************************************************************************************************************************
-192.168.56.119             : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+192.168.56.119             : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
 ----------------------
 
-With and ad-hoc command we can check that the directory was created.
+The playbook is executed without any inconvienience.
+
+Now our application is in the managed host ready to be executed to service a chatbot app. Let's first try to execute manually the engine on the managed host.
 
 [source,bash]
 ----------------------
-# ansible managedhosts -m command -a "ls -ld /root/chatbot" -i inventory
+# ssh root@192.168.56.119
 
-192.168.56.119 | CHANGED | rc=0 >>
-drwx------. 2 root root 6 Jan 13 17:38 /root/chatbot
+# cd /home/chatbot
+
+# python3 serviceProvider.py
+
+--------------------------------------------------------------------------
+
+  _____          _   _    _       _
+ |  __ \        | | | |  | |     | |
+ | |__) |___  __| | | |__| | __ _| |_
+ |  _  // _ \/ _` | |  __  |/ _` | __|
+ | | \ \  __/ (_| | | |  | | (_| | |_
+ |_|  \_\___|\__,_| |_|  |_|\__,_|\__|
+
+  Service Provider Demo
+  Alejandro Dirgan 2019
+
+
+--------------------------------------------------------------------------
+HELP:
+--------------------------------------------------------------------------
+to start server using other than default values use it with the paramaters:
+   serviceProvider.py [port=9095] [homedir=/tmp] [serviceName=serviceProvider] [verbose=True]
+
+to stop the server:
+   touch /tmp/serviceProvider.stop
+
+to send command to server via command line where 0.0.0.0 is the ip (localhost)
+   echo about | nc 0.0.0.0 9095
+
+--------------------------------------------------------------------------
+INFO:
+--------------------------------------------------------------------------
+True
+/tmp/serviceProvider.pid
+(init) starting serviceProvider!
+(init) home directory is /tmp
+(init) listening on port 9095
+(init) this process is identified by: 14813
+Found data preprocessed on disk!
+found model on disk!
+(eventLoop) entering event loop!
+
 ----------------------
 
+From the control host we can try to access the engine with Ncat command.
 
+[source,bash]
+----------------------
+# echo chat question=who_are_you? | nc 192.168.56.119 9095
+
+{"status": "(OK)", "response": {"tag": "who", "answer": "I am a robot that answers questions about Ansible"}}
+
+# echo chat question=who_are_you? | nc 192.168.56.119 9095
+
+{"status": "(OK)", "response": {"tag": "who", "answer": "I am a good chatter, specially if we talk about Ansible"}}
+
+# echo chat question=are_you_a_robot? | nc 192.168.56.119 9095
+
+{"status": "(OK)", "response": {"tag": "who", "answer": "I am a robot that answers questions about Ansible"}}
+
+----------------------
+
+As you can see the engine is able to classify your questions and respond accordingly. 
+
+Let's try the web interface so we can be sure everything is ok so far.
+
+In another ssh session to the managed host start the webChat.py program.
+
+[source,bash]
+----------------------
+# cd /home/chatbot
+
+# python3 webChat.py
+
+ * Serving Flask app "webChat" (lazy loading)
+ * Environment: production
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 306-602-425
+192.168.56.1 - - [14/Jan/2020 17:22:35] "GET / HTTP/1.1" 200 -
+192.168.56.1 - - [14/Jan/2020 17:22:35] "GET /favicon.ico HTTP/1.1" 404 -
+
+----------------------
+
+For accessing the service, just start a browser and type http://192.168.56.119:8080/chat
+
+image::webChat.png[Ansible chatbot Web Interface]
 
 
 
