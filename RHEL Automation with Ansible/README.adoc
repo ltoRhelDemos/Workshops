@@ -458,20 +458,6 @@ This layer expose through the port 9095 via linux sockets a chat service.
 
 This service is essetial for the webChat layer to work properly.
 
-=== Download the BOT src in the control host
-
-[source,bash]
-----------------------
-# cd /root/ansible/
-# git clone https://github.com/ltoRhelDemos/python-ansible-chatbot.git
-----------------------
-
-In the python-ansible-chatbot/ directory there are to python executable files.
-
-* serviceProvider.py, which is the ansible chatbot engine.
-
-* webChat.py, which is the web interface for accessing the service or to use the exposed restful API.
-
 === Creating the disk facilities for installing the application
 
 We need to copy the source code to our managed hosts. Every managed host has 2 devices on /dev for creating a volume group. Such is the case of:
@@ -481,7 +467,7 @@ We need to copy the source code to our managed hosts. Every managed host has 2 d
 
 We need to create a volume group out of these two devices. This volume group will be named as *chatbotVG*. Inside this volume group we are going to create a logical volume named *data*. This logical volume will be mounted in a directory called /home/chatbot. This needs to be translated to a Playbook for automating this OS admin tasks in a consistend way.
 
-Let´s start by checking that boths devices are present
+Let´s begin by checking that boths devices are present
 
 [source,bash]
 ---------------------
@@ -813,6 +799,20 @@ For this, we have cloned the chatbot repository from github in python-ansible-ch
 
 The following Playbook syncronize the content of this directory with the remote /home/chatbot directory. Then all the necesary ports are openned for the free access to the service.
 
+=== Download the BOT src in the control host
+
+[source,bash]
+----------------------
+# cd /root/ansible/
+# git clone https://github.com/ltoRhelDemos/python-ansible-chatbot.git
+----------------------
+
+In the python-ansible-chatbot/ directory there are to python executable files.
+
+* serviceProvider.py, which is the ansible chatbot engine.
+
+* webChat.py, which is the web interface for accessing the service or to use the exposed restful API.
+
 [source,bash]
 ----------------------
 # vim chatbotSyncSoftware.yml
@@ -821,11 +821,13 @@ The following Playbook syncronize the content of this directory with the remote 
   - hosts: managedhosts
 
     tasks:
-    - name: copying chatbot software to chatbot servers 
-      synchronize:
-        src:  python-ansible-chatbot/
-        dest: /home/chatbot/
 
+    - name: Clonning the chatbot software repository
+      git:
+        repo: 'https://github.com/ltoRhelDemos/python-ansible-chatbot.git'
+        dest: /home/chatbot/
+        force: yes
+        
     - name: Openning the webservice port 8080
       firewalld:
         port: 8080/tcp
@@ -844,18 +846,18 @@ The following Playbook syncronize the content of this directory with the remote 
         state: restarted
 ----------------------
 
-The first part copy all the software to the remote directory using the module Syncronize wich use rsync to do its magic. Then the ports 8080 and 9095 are opened uding the module firewalld wich needs the port, the protocol and if the action will be permanent. At the end we restart the firewall service util de module service.
+The first part clone the git chatbot repository to the remote directory using the module *git*. Then the ports 8080 and 9095 are opened uding the module firewalld wich needs the port, the protocol and if the action will be permanent. At the end we restart the firewall service util de module service.
 
 [source,bash]
 ----------------------
 # ansible-playbook chatbotSyncSoftware.yml -i ./inventory
 
-PLAY [managedhosts] ******************************************************************************************************************************************
+PLAY [managedhosts] ***************************************************************************************************************************************
 
 TASK [Gathering Facts] ***************************************************************************************************************************************
 ok: [192.168.56.119]
 
-TASK [copying chatbot software to chatbot servers] ***********************************************************************************************************
+TASK [Clonning the chatbot software repository] ***********************************************************************************************************
 changed: [192.168.56.119]
 
 TASK [Openning the webservice port 8080] *********************************************************************************************************************
@@ -872,7 +874,7 @@ PLAY RECAP *********************************************************************
 
 ----------------------
 
-The playbook is executed without any inconvienience.
+The playbook is executed successfully having 4 changes made, in this case the repo clonning, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart.
 
 Now our application is in the managed host ready to be executed to service a chatbot app. Let's first try to execute manually the engine on the managed host.
 
@@ -924,7 +926,12 @@ found model on disk!
 
 ----------------------
 
+This service is event driven, which means that it will get into an endless loop for accepting requests. 
+
 From the control host we can try to access the engine with Ncat command.
+
+[NOTE]
+Using the command "chat", then the parameter "question" followed by an equal sign "=" and the question substituing the spaces by underscores "_"
 
 [source,bash]
 ----------------------
@@ -942,7 +949,19 @@ From the control host we can try to access the engine with Ncat command.
 
 ----------------------
 
-As you can see the engine is able to classify your questions and respond accordingly. 
+As you can see the engine is able to classify your questions and respond accordingly. The sintax for asking question is very simple.
+
+If we need to stop the service, we only need to send a "stop" directive.
+
+[source,bash]
+----------------------
+# echo stop | nc 192.168.56.119 9095
+----------------------
+
+[NOTE] 
+Because this is an example service provider there is not security associated to stopping the service arbitratily.
+
+*The webChat*
 
 Let's try the web interface so we can be sure everything is ok so far.
 
