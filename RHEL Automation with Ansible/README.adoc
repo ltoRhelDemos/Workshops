@@ -931,7 +931,7 @@ This service is event driven, which means that it will get into an endless loop 
 From the control host we can try to access the engine with Ncat command.
 
 [NOTE]
-Using the command "chat", then the parameter "question" followed by an equal sign "=" and the question substituing the spaces by underscores "_"
+The sintax is very simple. Use the command "chat", then the parameter "question" followed by an equal sign "=" and the question substituing the spaces by underscores "_"
 
 [source,bash]
 ----------------------
@@ -949,9 +949,9 @@ Using the command "chat", then the parameter "question" followed by an equal sig
 
 ----------------------
 
-As you can see the engine is able to classify your questions and respond accordingly. The sintax for asking question is very simple.
+As you can see, the engine is able to classify your questions and respond accordingly. The sintax for asking question is very simple.
 
-If we need to stop the service, we only need to send a "stop" directive.
+If we need to stop the service, we only are required to send a "stop" directive.
 
 [source,bash]
 ----------------------
@@ -986,11 +986,28 @@ In another ssh session to the managed host start the webChat.py program.
 
 ----------------------
 
-For accessing the service, just start a browser and type http://192.168.56.119:8080/chat
+For accessing the service, just start a browser and type *http://192.168.56.119:8080/chat*
 
-If everythiong is ok, the following interface will be shown in the browser.
+If everything is ok, the following interface will be shown in the browser.
 
 image::webChat.png[Ansible chatbot Web Interface]
+
+Another way to interact with the chatbot is using its API directly.
+
+From the browser access *http://192.168.56.119:8080/api?command=chat&question=who_are_you*
+
+The response on the browser should be:
+
+[source,bash]
+----------------------
+{
+"response": {
+"answer": "I am a good chatter, specially if talk about Ansible",
+"tag": "who"
+},
+"status": "(OK)"
+}
+----------------------
 
 === Automating the starting of the service
 
