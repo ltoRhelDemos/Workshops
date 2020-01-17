@@ -475,6 +475,7 @@ Let´s begin by checking that boths devices are present
 
 ---
   - hosts: managedhosts
+    name: Creating the chatbot filesystem
 
     tasks:
 
@@ -580,7 +581,7 @@ The playbook proceed with the following:
 ------------------
 # ansible-playbook chatbotCreateFilesystem.yml -i ./inventory
 
-PLAY [managedhosts] ******************************************************************************************************************************************
+PLAY [Creating the chatbot filesystem] ******************************************************************************************************************************************
 
 TASK [Gathering Facts] ***************************************************************************************************************************************
 ok: [192.168.56.119]
@@ -643,6 +644,7 @@ Let's start for creating this playbook.
 
 ---
   - hosts: managedhosts
+    name: Installing software dependencies
     gather_facts: no 
     tasks:
     
@@ -699,7 +701,7 @@ The tasks define for this stage are:
 ----------------------
 # ansible-playbook installChatBotPythonDependencies.yml -i inventory
 
-PLAY [managedhosts] ******************************************************************************************************************************************
+PLAY [[Installing software dependencies] ******************************************************************************************************************************************
 
 TASK [installing python 3.6] ************************************************************************************************************************************
 changed: [192.168.56.119]
@@ -752,6 +754,7 @@ We also need to open ports to get the application running propoerly and create t
 
 ---
   - hosts: managedhosts
+    name: Installing chatbot software
     gather_facts: no
     tasks:
 
@@ -804,7 +807,7 @@ The following steps are done:
 ----------------------
 # ansible-playbook chatbotInstallSoftware.yml -i ./inventory
 
-PLAY [managedhosts] ***************************************************************************************************************************************
+PLAY [Installing chatbot software] ***************************************************************************************************************************************
 
 TASK [Clonning the chatbot software repository] **************************************************************************************************************
 changed: [192.168.56.126]
@@ -976,6 +979,7 @@ Now that we are sure the application is installed and everything goes well its t
 ----------------------
 ---
   - hosts: managedhosts
+    name: Starting chatbot services
     gather_facts: no
 
     tasks:
@@ -1001,7 +1005,7 @@ Let's execute the playbook.
 ----------------------
 # ansible-playbook chatbotStartServices.yml -i ./inventory
 
-PLAY [managedhosts] *************************************************************************************************************************
+PLAY [Starting chatbot services] *************************************************************************************************************************
 
 TASK [enable ansibleChatbot service] *************************************************************************************************************************
 changed: [192.168.56.126]
@@ -1025,6 +1029,7 @@ This is the final step to be done in order to guaratee the service will survive 
 ----------------------
 ---
   - hosts: managedhosts
+    name: Rebooting...
     gather_facts: no
     
     tasks:
@@ -1045,7 +1050,7 @@ The playbook uses the *reboot module* in which we are specifying to wait 30 seco
 ----------------------
 # ansible-playbook chatbotRebootServer.yml -i ./inventory
 
-PLAY [managedhosts] *************************************************************************************************
+PLAY [Rebooting...] *************************************************************************************************
 
 TASK [Reboot host and wait for it to restart] *********************************************************************************************************************
 changed: [192.168.56.126]
@@ -1088,5 +1093,104 @@ Let´s create a masterPlaybook.
   - import_playbook: chatbotRebootServer.yml
 ----------------------
 
-After saving this playbook, the execution will be importing the previously created playbooks and will be executed in the order they appear.
+After saving this playbook, the execution will be importing the previously created playbooks and those will be executed in the order they appear.
+
+[source,bash]
+----------------------
+# ansible-playbook chatbotMasterPlaybook.yml -i ./inventory
+
+PLAY [Creating chatbot filesystem] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] ***************************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [checking for device /dev/sdb] **************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [checking for device /dev/sdc] **************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [Creating chatbot Volume group.] ************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Creating data Logical Volume.] *************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Creating a XFS filesystem on lvm /dev/mapper/chatbotVG-data.] ******************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Creating the mounting point /home/chatbot.] ************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Mount the  filesystem.] ********************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Error on disk creation results] ************************************************************************************************************************
+skipping: [192.168.56.119]
+
+PLAY [Installing software dependencies] ******************************************************************************************************************************************
+
+TASK [installing python 3.6] *********************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing git] ****************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing nltk] ***************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing tflearn] ************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing numpy] **************************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [installing tensorflow] *********************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing flask] **************************************************************************************************************************************
+changed: [192.168.56.119]
+
+PLAY [Installing chatbot software] ******************************************************************************************************************************************
+
+TASK [Clonning the chatbot software repository] **************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [copying ansibleChatbot.service template to /etc/systemd/system] ****************************************************************************************
+changed: [192.168.56.119]
+
+TASK [copying ansibleChatbotWebInterface.service template to /etc/systemd/system] ****************************************************************************
+changed: [192.168.56.119]
+
+TASK [Openning the webservice port 8080] *********************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Openning the engine port 9095] *************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [restarting the firewalld] ******************************************************************************************************************************
+changed: [192.168.56.119]
+
+PLAY [Starting chatbot services] ******************************************************************************************************************************************
+
+TASK [enable ansibleChatbot service] *************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [enable ansibleChatbotWebInterface service] *************************************************************************************************************
+changed: [192.168.56.119]
+
+PLAY [Rebooting...] ******************************************************************************************************************************************
+
+TASK [Reboot host and wait for it to restart] ****************************************************************************************************************
+changed: [192.168.56.119]
+
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.56.119             : ok=24   changed=20   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+----------------------
+
+After this execution, the application will be up and running and the server will be accessible to interct with.
+
+* Other way to consolidate all the playbooks created is saving all individual files in a consolidated playbook. This way only one file needs to be saved and executed. The drawbacks of this approach is the scalability. The modularity of manipulating isolated playbooks and then combined on one master using imports is much more maintainable.
+
 
