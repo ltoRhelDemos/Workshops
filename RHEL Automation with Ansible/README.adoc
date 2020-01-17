@@ -1017,9 +1017,44 @@ After the execution we see that both services were chaged to started.
 
 The goal of the playbook is, finally, having the chatbot service up&running. After this we can check the service on the browser using the following address *https://192.168.56.119:8080/chat*.
 
+=== Booting the server and check the services are up
 
+This is the final step to be done in order to guaratee the service will survive to the server boot. In this case, the following playbook only execute a reboot and wait for the server to boot up.
 
+[source,bash]
+----------------------
+---
+  - hosts: managedhosts
+    gather_facts: no
+    
+    tasks:
+    
+    - name: Reboot host and wait for it to restart
+      reboot:
+        msg: "Reboot initiated by Ansible"
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: "systemctl is-active ansibleChatbot --quiet && systemctl is-active --quit ansibleChatbotWebInterface"
+----------------------
 
+The playbook uses the *reboot module* in which we are specifying to wait 30 seconds until the server is up again. Also look at the test_command parameter at the end. We are using a composed bash sheel command using systemd with is-active parameter which, is both service are up, returns 0. 
 
+[source,bash]
+----------------------
+# ansible-playbook chatbotRebootServer.yml -i ./inventory
+
+PLAY [managedhosts] *************************************************************************************************
+
+TASK [Reboot host and wait for it to restart] *********************************************************************************************************************
+changed: [192.168.56.126]
+
+PLAY RECAP **********************************************************************************************************
+192.168.56.126             : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+----------------------
+
+The result is ok=1, changed=1. In this case the reboot was executed successfully and the test_command passed.
 
 
