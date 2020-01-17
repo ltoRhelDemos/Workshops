@@ -655,7 +655,8 @@ PLAY RECAP *********************************************************************
 
 This playbook was executed starting gathering facts. This module is automatically called by playbooks to gather useful variables about remote hosts that can be used in playbooks.
 
-In fact, we can execute as an ad-hoc command using ansible. For example.
+NOTE:
+We can execute as an ad-hoc command using ansible. For example.
 
 [source,bash]
 ----------------------
@@ -795,27 +796,13 @@ In this stage we are sure all re pre-requisites are met to starting to create th
 
 === Installing the software in its final destination
 
-For this, we have cloned the chatbot repository from github in python-ansible-chatbot directory. This directory contains all the sources and data needed to execute out service.
+For this, we need to clone the chatbot repository from github in the remote /home/chatbot filesystem. This directory contains all the sources and data needed to execute out service.
 
-The following Playbook syncronize the content of this directory with the remote /home/chatbot directory. Then all the necesary ports are openned for the free access to the service.
-
-=== Download the BOT src in the control host
+We also need to open ports to get the application running propoerly.
 
 [source,bash]
 ----------------------
-# cd /root/ansible/
-# git clone https://github.com/ltoRhelDemos/python-ansible-chatbot.git
-----------------------
-
-In the python-ansible-chatbot/ directory there are to python executable files.
-
-* serviceProvider.py, which is the ansible chatbot engine.
-
-* webChat.py, which is the web interface for accessing the service or to use the exposed restful API.
-
-[source,bash]
-----------------------
-# vim chatbotSyncSoftware.yml
+# vim chatbotInstallSoftware.yml
 
 ---
   - hosts: managedhosts
@@ -846,7 +833,7 @@ In the python-ansible-chatbot/ directory there are to python executable files.
         state: restarted
 ----------------------
 
-The first part clone the git chatbot repository to the remote directory using the module *git*. Then the ports 8080 and 9095 are opened uding the module firewalld wich needs the port, the protocol and if the action will be permanent. At the end we restart the firewall service util de module service.
+The first part clones the git chatbot repository to the remote directory using the module *git*. Then the ports 8080 and 9095 are opened uding the module firewalld wich needs the port, the protocol and if the action will be permanent. At the end we restart the firewall service util de module service.
 
 [source,bash]
 ----------------------
