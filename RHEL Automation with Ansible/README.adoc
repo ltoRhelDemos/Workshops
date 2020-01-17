@@ -614,7 +614,7 @@ PLAY RECAP *********************************************************************
 
 ------------------
 
-Every task have some hints of what jus happened. 
+Every task have some hints of what just happened. 
 
 * changed. Is showed when the task has been successfully executed and the action change something in the remote host. This could be that, for example, the filesystem that did not exist was created.
 
@@ -623,11 +623,11 @@ Every task have some hints of what jus happened.
 * skipping: By a conditional condition, the task was skipped. In this playbook, a task that expect an error was not executed because there were no errorers in the execution.
 
 [NOTE] 
-At this stage, the filesystem is created and mounted on /home/chatbot. This directory will be used for clonning the github repository where the application is stored.
+At this stage, the filesystem was created and mounted on /home/chatbot. This directory will be used for clonning the github repository where the application is stored.
 
 === installing the application dependencies.
 
-The chatbot appication is pthon 3 based, so we need to install python 3 on our remote servers. We are going to create a playbook to 
+The chatbot appication is python 3 based, so we need to install python 3 on our remote servers. We are going to create a playbook to 
 for installing this package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an *idempotent tool*. Ansible will look to get to the desired stated (installed). If the package or the  libraries are already installed any of the actions assotiated will be executed.
 
 [NOTE] 
@@ -677,6 +677,8 @@ Let's start for creating this playbook.
           name: flask
 ----------------------
 
+We don´t need to gather facts in this playbook, because we don´t need any host based variable to execute tasks, so we can speed up the execution of this playbook using the gather_fact module.
+
 The hosts to interact with are which are present in the managedhosts group of the inventory created previously. In our case is the IP Address 192.168.56.119.
 
 The tasks define for this stage are:
@@ -699,175 +701,50 @@ The tasks define for this stage are:
 
 PLAY [managedhosts] ******************************************************************************************************************************************
 
-TASK [Gathering Facts] ***************************************************************************************************************************************
+TASK [installing python 3.6] ************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing git] ************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing nltk] ******************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing tflearn] ***************************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [installing numpy] ***************************************************************************************************************************************
 ok: [192.168.56.119]
 
-TASK [install python 3.6] ************************************************************************************************************************************
+TASK [installing tensorflow] ************************************************************************************************************************************
 changed: [192.168.56.119]
 
-TASK [install nltk] ******************************************************************************************************************************************
-changed: [192.168.56.119]
-
-TASK [install tflearn] ***************************************************************************************************************************************
-changed: [192.168.56.119]
-
-TASK [install tensorflow] ************************************************************************************************************************************
-changed: [192.168.56.119]
-
-TASK [install flask] *****************************************************************************************************************************************
+TASK [installing flask] *****************************************************************************************************************************************
 changed: [192.168.56.119]
 
 PLAY RECAP ***************************************************************************************************************************************************
-192.168.56.119             : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+192.168.56.119             : ok=7    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 
 ----------------------
 
-This playbook was executed starting gathering facts. This module is automatically called by playbooks to gather useful variables about remote hosts that can be used in playbooks.
+The first two tasks installs python and git, then it continues with the actions associated with libraries installation using the *module pip*. Each one is in charge of taking the library to the state desired, by default is "installed".
 
-[NOTE]
-We can execute as an ad-hoc command using ansible. For example.
-
-[source,bash]
-----------------------
-# ansible managedhosts -m gather_facts --tree /tmp/facts -i ./inventory
-
-192.168.56.119 | SUCCESS => {
-    "ansible_facts": {
-        "ansible_all_ipv4_addresses": [
-            "10.0.2.15",
-            "192.168.56.119",
-            "192.168.122.1"
-        ],
-        "ansible_all_ipv6_addresses": [
-            "fe80::a36:3b15:8f03:59a9",
-            "fe80::7957:b5e7:19e1:e2ea",
-            "fe80::5c76:f9ff:7511:26c7"
-        ],
-        "ansible_apparmor": {
-            "status": "disabled"
-        },
-        "ansible_architecture": "x86_64",
-        "ansible_bios_date": "12/01/2006",
-        "ansible_bios_version": "VirtualBox",
-        "ansible_cmdline": {
-            "BOOT_IMAGE": "(hd0,msdos1)/vmlinuz-4.18.0-147.el8.x86_64",
-            "quiet": true,
-            "rd.lvm.lv": "rhel_yogurtu/swap",
-            "resume": "/dev/mapper/rhel_yogurtu-swap",
-            "rhgb": true,
-            "ro": true,
-            "root": "/dev/mapper/rhel_yogurtu-root"
-        },
-        "ansible_date_time": {
-            "date": "2020-01-13",
-            "day": "13",
-            "epoch": "1578951976",
-            "hour": "16",
-            "iso8601": "2020-01-13T21:46:16Z",
-...
-
- "ansible_virbr0_nic": {
-            "active": false,
-            "device": "virbr0-nic",
-            "features": {
-                "esp_hw_offload": "off [fixed]",
-                "esp_tx_csum_hw_offload": "off [fixed]",
-                "fcoe_mtu": "off [fixed]",
-                "generic_receive_offload": "on",
-                "generic_segmentation_offload": "on",
-                "highdma": "off [fixed]",
-                "hw_tc_offload": "off [fixed]",
-                "l2_fwd_offload": "off [fixed]",
-                "large_receive_offload": "off [fixed]",
-                "loopback": "off [fixed]",
-                "netns_local": "off [fixed]",
-                "ntuple_filters": "off [fixed]",
-                "receive_hashing": "off [fixed]",
-                "rx_all": "off [fixed]",
-                "rx_checksumming": "off [fixed]",
-                "rx_fcs": "off [fixed]",
-                "rx_gro_hw": "off [fixed]",
-                "rx_udp_tunnel_port_offload": "off [fixed]",
-                "rx_vlan_filter": "off [fixed]",
-                "rx_vlan_offload": "off [fixed]",
-                "rx_vlan_stag_filter": "off [fixed]",
-                "rx_vlan_stag_hw_parse": "off [fixed]",
-                "scatter_gather": "on",
-                "tcp_segmentation_offload": "off",
-                "tls_hw_record": "off [fixed]",
-                "tls_hw_rx_offload": "off [fixed]",
-                "tls_hw_tx_offload": "off [fixed]",
-                "tx_checksum_fcoe_crc": "off [fixed]",
-                "tx_checksum_ip_generic": "off [requested on]",
-                "tx_checksum_ipv4": "off [fixed]",
-                "tx_checksum_ipv6": "off [fixed]",
-                "tx_checksum_sctp": "off [fixed]",
-                "tx_checksumming": "off",
-                "tx_esp_segmentation": "off [fixed]",
-                "tx_fcoe_segmentation": "off [fixed]",
-                "tx_gre_csum_segmentation": "off [fixed]",
-                "tx_gre_segmentation": "off [fixed]",
-                "tx_gso_partial": "off [fixed]",
-                "tx_gso_robust": "off [fixed]",
-                "tx_ipxip4_segmentation": "off [fixed]",
-                "tx_ipxip6_segmentation": "off [fixed]",
-                "tx_lockless": "on [fixed]",
-                "tx_nocache_copy": "off",
-                "tx_scatter_gather": "on",
-                "tx_scatter_gather_fraglist": "on",
-                "tx_sctp_segmentation": "off [fixed]",
-                "tx_tcp6_segmentation": "off [requested on]",
-                "tx_tcp_ecn_segmentation": "off [requested on]",
-                "tx_tcp_mangleid_segmentation": "off",
-                "tx_tcp_segmentation": "off [requested on]",
-                "tx_udp_segmentation": "off [fixed]",
-                "tx_udp_tnl_csum_segmentation": "off [fixed]",
-                "tx_udp_tnl_segmentation": "off [fixed]",
-                "tx_vlan_offload": "on",
-                "tx_vlan_stag_hw_insert": "on",
-                "vlan_challenged": "off [fixed]"
-            },
-            "hw_timestamp_filters": [],
-            "macaddress": "52:54:00:14:f3:61",
-            "mtu": 1500,
-            "promisc": true,
-            "timestamping": [
-                "tx_software",
-                "rx_software",
-                "software"
-            ],
-            "type": "ether"
-        },
-        "ansible_virtualization_role": "guest",
-        "ansible_virtualization_type": "virtualbox",
-        "discovered_interpreter_python": "/usr/libexec/platform-python",
-        "gather_subset": [
-            "all"
-        ],
-        "module_setup": true
-    },
-    "changed": false
-}
-
-----------------------
-
-Then it continues with the actions associated with libraries installation using the module pip. Each one is in charge of taking the library to the state desired, by default is "installed".
-
-At the end of the execution output you can notice a PLAY RECAP, which in turns indicates that 5 things were changed, in this case the installation of python 3.6 and the installation of nlt, tflearn, tensorflow and flask libraries.
+At the end of the execution output you can notice a PLAY RECAP, which in turns indicates that 6 things were changed, in this case the installation of python 3.6, git and the installation of nlt, tflearn, tensorflow and flask libraries.
 
 [source,bash]
 ----------------------
 PLAY RECAP ***************************************************************************************************************************************************
-192.168.56.119             : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+192.168.56.119             : ok=7    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ----------------------
 
-In this stage we are sure all re pre-requisites are met to starting to create the directories where our software will be installed.
+[NOTE] 
+In this stage we are sure all re pre-requisites are met for installing the appplication.
 
 === Installing the software in its final destination
 
-For this, we need to clone the chatbot repository from github in the remote /home/chatbot filesystem. This directory contains all the sources and data needed to execute out service.
+For this phase, we need to clone the chatbot repository from github in the remote /home/chatbot filesystem. This directory contains all the sources and data needed to execute the ansible chat service.
 
-We also need to open ports to get the application running propoerly.
+We also need to open ports to get the application running propoerly and create the configuration files to manage the application as a service using the systemd facility.
 
 [source,bash]
 ----------------------
@@ -875,7 +752,7 @@ We also need to open ports to get the application running propoerly.
 
 ---
   - hosts: managedhosts
-
+    gather_facts: no
     tasks:
 
     - name: Clonning the chatbot software repository
@@ -883,7 +760,21 @@ We also need to open ports to get the application running propoerly.
         repo: 'https://github.com/ltoRhelDemos/python-ansible-chatbot.git'
         dest: /home/chatbot/
         force: yes
-        
+
+    - name: copying ansibleChatbot.service template to /etc/systemd/system
+      copy:
+        src: /home/chatbot/ansibleChatbot.service
+        dest: /etc/systemd/system
+        remote_src: yes
+        mode: '0644'
+
+    - name: copying ansibleChatbotWebInterface.service template to /etc/systemd/system
+      copy:
+        src: /home/chatbot/ansibleChatbotWebInterface.service
+        dest: /etc/systemd/system
+        remote_src: yes
+        mode: '0644'
+
     - name: Openning the webservice port 8080
       firewalld:
         port: 8080/tcp
@@ -902,37 +793,45 @@ We also need to open ports to get the application running propoerly.
         state: restarted
 ----------------------
 
-The first part clones the git chatbot repository to the remote directory using the module *git*. Then the ports 8080 and 9095 are opened uding the module firewalld wich needs the port, the protocol and if the action will be permanent. At the end we restart the firewall service util de module service.
+The following steps are done:
+
+* Using the *git module* we are clonning the chatbot application repository on /home/chatbot fliesystem
+* The *copy module* is used copy the two configuration files need for systemd to start, stop, enable, disable and get the status of our services, the chatbot engine and the web interface service.
+* Then we use the *firewalld module* in order to open the ports 8085 and 9095 (tcp) making them permanent.
+* Finnally with the *service module* we restart firewalld.
 
 [source,bash]
 ----------------------
-# ansible-playbook chatbotSyncSoftware.yml -i ./inventory
+# ansible-playbook chatbotInstallSoftware.yml -i ./inventory
 
 PLAY [managedhosts] ***************************************************************************************************************************************
 
-TASK [Gathering Facts] ***************************************************************************************************************************************
-ok: [192.168.56.119]
+TASK [Clonning the chatbot software repository] **************************************************************************************************************
+changed: [192.168.56.126]
 
-TASK [Clonning the chatbot software repository] ***********************************************************************************************************
-changed: [192.168.56.119]
+TASK [copying ansibleChatbot.service template to /etc/systemd/system] ****************************************************************************************
+changed: [192.168.56.126]
+
+TASK [copying ansibleChatbotWebInterface.service template to /etc/systemd/system] ****************************************************************************
+changed: [192.168.56.126]
 
 TASK [Openning the webservice port 8080] *********************************************************************************************************************
-changed: [192.168.56.119]
+changed: [192.168.56.126]
 
 TASK [Openning the engine port 9095] *************************************************************************************************************************
-changed: [192.168.56.119]
+changed: [192.168.56.126]
 
 TASK [restarting the firewalld] ******************************************************************************************************************************
-changed: [192.168.56.119]
+changed: [192.168.56.126]
 
 PLAY RECAP ***************************************************************************************************************************************************
-192.168.56.119             : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+192.168.56.126             : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 
 ----------------------
 
-The playbook is executed successfully having 4 changes made, in this case the repo clonning, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart.
+The playbook is executed successfully having 6 changes made, in this case the repo clonning, the systemd configuration files copyed to /etc/systemd/system directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart.
 
-Now our application is in the managed host ready to be executed to service a chatbot app. Let's first try to execute manually the engine on the managed host.
+Now our application is in the managed host ready to be executed to start the chat service. Let's first try to execute manually the engine on the managed host.
 
 [source,bash]
 ----------------------
@@ -1015,13 +914,13 @@ If we need to stop the service, we only are required to send a "stop" directive.
 ----------------------
 
 [NOTE] 
-Because this is an example service provider there is not security associated to stopping the service arbitratily.
+Because this is an example service provider there is not security associated for stopping the service arbitratily.
 
 *The webChat*
 
 Let's try the web interface so we can be sure everything is ok so far.
 
-In another ssh session to the managed host start the webChat.py program.
+In another ssh session connected to the managed host start the webChat.py program.
 
 [source,bash]
 ----------------------
@@ -1065,9 +964,59 @@ The response on the browser should be:
 }
 ----------------------
 
-=== Automating the starting of the service
+[NOTE] 
 
-Now that we are sure the application is installed and everything goes well its time to automate the service start at boot time of the managed host.
+Now it is time to start de application as a service and automate the application starting procedure with systemd. That is the goal of the following playbook.
+
+=== Automating the starting of the chat service
+
+Now that we are sure the application is installed and everything goes well its time to automate the service start at boot time.
+
+[source,bash]
+----------------------
+---
+  - hosts: managedhosts
+    gather_facts: no
+
+    tasks:
+
+      - name: enable ansibleChatbot service
+        systemd:
+          name: ansibleChatbot
+          state: started
+          enabled: yes
+
+      - name: enable ansibleChatbotWebInterface service
+        systemd:
+          name: ansibleChatbotWebInterface
+          state: started
+          enabled: yes
+----------------------
+
+Enabling the services is an easy task using *systemd module*. For both services we are going to start them with the *enable* directive in order to ansible not only to start the services but making them automatically restartable at boot time.
+
+Let's execute the playbook.
+
+[source,bash]
+----------------------
+# ansible-playbook chatbotStartServices.yml -i ./inventory
+
+PLAY [managedhosts] *************************************************************************************************************************
+
+TASK [enable ansibleChatbot service] *************************************************************************************************************************
+changed: [192.168.56.126]
+
+TASK [enable ansibleChatbotWebInterface service] *************************************************************************************************************************
+changed: [192.168.56.126]
+
+PLAY RECAP **************************************************************************************************************
+192.168.56.126             : ok=2    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+----------------------
+
+After the execution we see that both services were chaged to started.
+
+The goal of the playbook is, finally, having the chatbot service up&running. After this we can check the service on the browser using the following address *https://192.168.56.119:8080/chat*.
+
 
 
 
