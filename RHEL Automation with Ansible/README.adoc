@@ -499,11 +499,14 @@ Let´s begin by checking that boths devices are present
 ...
 ---------------------
 
-Here we have coded a Block. A block able us to manage errors easily. We start with hosts: managedhosts as in inventory file has been set. For each IP address present in the group managedhosts ansible will execute the actions after the tasks tag is implemented.
+Here we have coded a Block. A block able us to manage errors easily. We start with hosts: managedhosts as in inventory file has been set. For each IP address present in the group managedhosts ansible will execute the actions inside TASKS tag. 
 
 We are going to check the hostvars content, which is populated when the gather_facts module is automatically executed. In this case we are checking the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] to determine if sdb exists.
 
-In case one or both devices are not present, a fact is created called "proceedWithInstallation" that will be useful to execute the rest of our playbook. If this variable is set to no, further installation won't be executed.
+[NOTE]
+hostvars is a dictionary keyed by each host.
+
+In case one or both devices are not present, a fact is created called "proceedWithInstallation" that will be useful to execute the rest of our playbook. If this variable is set to no, further installation won't be executed. This occurs in the recue clause where we use set_fact to update the proceedWithIntsllation variable.
 
 After we check the existance of our devices we proceed to create the volume group and logical volume to be mounted.
 
@@ -554,22 +557,25 @@ After we check the existance of our devices we proceed to create the volume grou
           - hostvars[inventory_hostname]['proceedWithInstallation']
 
         
-      - name: Showing disk management results
+      - name: Error on disk creation results
         debug: 
           msg: "An error occured when trying to create the disk facilities for the chatbot, aborting installation! {{hostvars[inventory_hostname]['proceedWithInstallation']}}"
         when:  
-          - not hostvars[inventory_hostname]['proceedWithInstallation']          
+          - not hostvars[inventory_hostname]['proceedWithInstallation']      
 --------------------
           
 Another block is created with a *when clause* for execute the procedure if both devices are present. 
 
 The playbook proceed with the following:
 
-- Create a volume group called *chatbotVG* with sdc and sdc devices
-- Create a logical volume called *data* which size is 4 Gb.
-- Create a filesystem XFS on /dev/mapper/chatbotVG-data
-- Create a mount point called */home/chatbot*
-- Mount /dev/mapper/chatbotVG-data on /home/chatbot
+- Create a volume group called *chatbotVG* with sdc and sdc devices using *lvg* ansible module.
+- Create a logical volume called *data* which size is 4 Gb using *lvol* ansible module..
+- Create a filesystem XFS on /dev/mapper/chatbotVG-data using *filesystem* ansible module.
+- Create a mount point called */home/chatbot*  using *file* ansible module.
+- Mount /dev/mapper/chatbotVG-data on /home/chatbot using *mount* ansible module.
+
+[NOTE] 
+At this stage, the filesystem is created and mounted on /home/chatbot. This directory will be used for clonning the github repository where the application is stored.
 
 === installing the application dependencies.
 
@@ -655,7 +661,7 @@ PLAY RECAP *********************************************************************
 
 This playbook was executed starting gathering facts. This module is automatically called by playbooks to gather useful variables about remote hosts that can be used in playbooks.
 
-NOTE:
+[NOTE]
 We can execute as an ad-hoc command using ansible. For example.
 
 [source,bash]
