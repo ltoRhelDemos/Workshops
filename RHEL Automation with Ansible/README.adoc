@@ -1191,6 +1191,6 @@ PLAY RECAP *********************************************************************
 
 After this execution, the application will be up and running and the server will be accessible to interct with.
 
-* Other way to consolidate all the playbooks created is saving all individual files in a consolidated playbook. This way only one file needs to be saved and executed. The drawbacks of this approach is the scalability. The modularity of manipulating isolated playbooks and then combined on one master using imports is much more maintainable.
+* Other way to consolidate all the playbooks created is saving all individual files in a consolidated playbook. This way only one file needs to be saved and executed. The drawbacks of this approach is the scalability. The modularity of manipulating isolated playbooks and then combined on one master using imports is much more maintainable, easy to read and scalable.
 
 
