@@ -471,6 +471,8 @@ Let´s begin by checking that boths devices are present
 
 [source,bash]
 ---------------------
+# vim chatbotCreateFilesystem.yml
+
 ---
   - hosts: managedhosts
 
@@ -574,61 +576,122 @@ The playbook proceed with the following:
 - Create a mount point called */home/chatbot*  using *file* ansible module.
 - Mount /dev/mapper/chatbotVG-data on /home/chatbot using *mount* ansible module.
 
+[source, bash]
+------------------
+# ansible-playbook chatbotCreateFilesystem.yml -i ./inventory
+
+PLAY [managedhosts] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] ***************************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [checking for device /dev/sdb] **************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [checking for device /dev/sdc] **************************************************************************************************************************
+ok: [192.168.56.119]
+
+TASK [Creating chatbot Volume group.] ************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Creating data Logical Volume.] *************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Creating a XFS filesystem on lvm /dev/mapper/chatbotVG-data.] ******************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Creating the mounting point /home/chatbot.] ************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Mount the  filesystem.] ********************************************************************************************************************************
+changed: [192.168.56.119]
+
+TASK [Error on disk creation results] ************************************************************************************************************************
+skipping: [192.168.56.119]
+
+PLAY RECAP ***************************************************************************************************************************************************
+192.168.56.119             : ok=8    changed=5    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+------------------
+
+Every task have some hints of what jus happened. 
+
+* changed. Is showed when the task has been successfully executed and the action change something in the remote host. This could be that, for example, the filesystem that did not exist was created.
+
+* ok: nothing was changed on the remote host because, by the idempotnet nature, ansible determined nothing had to be done in order to get the result expected.
+
+* skipping: By a conditional condition, the task was skipped. In this playbook, a task that expect an error was not executed because there were no errorers in the execution.
+
 [NOTE] 
 At this stage, the filesystem is created and mounted on /home/chatbot. This directory will be used for clonning the github repository where the application is stored.
 
 === installing the application dependencies.
 
-The application needs python 3.6 installed in the managed host, so we need to create a playbook for installing the package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an idempotent tool. It will look to get to the desired stated (installed). If the package or the  libraries are already installed any of the actions assotiated will be executed.
+The chatbot appication is pthon 3 based, so we need to install python 3 on our remote servers. We are going to create a playbook to 
+for installing this package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an *idempotent tool*. Ansible will look to get to the desired stated (installed). If the package or the  libraries are already installed any of the actions assotiated will be executed.
+
+[NOTE] 
+Also, we will need to install git in order to the remote host be able to clone the chatbot application repository.
 
 Let's start for creating this playbook.
 
-[NOTE] by now, we are creating independent Playbooks as big blocks as far as simplicity of explanation is concerned. Nevertheless at the end we will create a unique Playbook with all this isolated blocks for executing it in one piece.
+[NOTE] by now, we are creating independent Playbooks as big blocks as far as simplicity of explanation is concerned. At the end we will be using Ansible import_playbook directive to import every individual playbook and execute them as a whole.
 
 [source,bash]
 ----------------------
 # vim installChatBotPythonDependencies.yml
 
-- hosts: managedhosts
-  tasks:
-  - name: install python 3.6
-    yum:
-      name: python36
-      state: latest
+---
+  - hosts: managedhosts
+    gather_facts: no 
+    tasks:
+    
+      - name: installing python 3.6
+        yum: 
+          name: python36
+          state: latest
 
-  - name: install nltk
-    pip:
-      name: nltk
+      - name: installing git
+        yum: 
+          name: git
+          state: latest
+   
+      - name: installing nltk
+        pip:
+          name: nltk
 
-  - name: install numpy
-    pip:
-      name: numpy
+      - name: installing tflearn
+        pip:
+          name: tflearn
 
-  - name: install tflearn
-    pip:
-      name: tflearn
+      - name: installing numpy
+        pip:
+          name: numpy
 
-  - name: install tensorflow
-    pip:
-      name: tensorflow
+      - name: installing tensorflow
+        pip:
+          name: tensorflow
 
-  - name: install flask
-    pip:
-      name: flask
-
+      - name: installing flask
+        pip:
+          name: flask
 ----------------------
 
 The hosts to interact with are which are present in the managedhosts group of the inventory created previously. In our case is the IP Address 192.168.56.119.
 
-Then we define the tasks that are going to be executed in this playbook. 
+The tasks define for this stage are:
 
-* At first place we need to be sure python 3.6 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the yum module which needs the package name (in this case python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
+* At first place we need to be sure python 3.6 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the *yum module* which needs the package name (in this case python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
 
 - name: python36
 - state: latest
 
-* The following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numerical calculationsm, tflearn and tensorflow for applying artificial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The pip module only needs the name of the libraries that need to be installed.
+* GIT is also needed on the remote hosts. This is because in the following playbook we will need to clone the application repository. So, we use the yum module again to install it.
 
+- name: git
+- state: latest
+
+* The following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numerical calculationsm, tflearn and tensorflow for applying artificial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The *pip module* only needs the *name* of the libraries that need to be installed.
 
 [source,bash]
 ----------------------
