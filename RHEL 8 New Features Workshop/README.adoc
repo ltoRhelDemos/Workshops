@@ -308,6 +308,8 @@ Red Hat Enterprise Linux 8 ships a new tool, called Image Builder, that allows y
 
 Use a whiteboard to explain how image builder could be helpful to create and maintain rhel images. 
 
+https://www.youtube.com/watch?v=UopGqYs0PKA[Video]
+
 Tell possible scenarios and use cases for creating images and the benefits of using such technology to be more agile in delivering OS.
 
 === Execution
