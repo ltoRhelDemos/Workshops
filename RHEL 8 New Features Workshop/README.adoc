@@ -555,6 +555,7 @@ UBI can be used to create and re-distribute a container with the application nee
 With RHEL 8 some tools are available for upgrade from version 7.6 to 8 with almost no intervention.
 
 https://www.youtube.com/watch?v=y6v3JIIYpGA[1- Leapp+Boom]
+
 https://www.redhat.com/en/about/videos/rhel-8-beta-booting-snapshots-boom-boot-manager[2- Booting from Snapshots]
 
 === Pre Execution
