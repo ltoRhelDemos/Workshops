@@ -231,7 +231,7 @@ For speed up any of the actions proposed in this workshop we recommend to create
 
 ==== Log in in the control node
 
-When asks for password just press enter
+When asks for password just press enter.
 
 [source,bash]
 -----------------
@@ -334,7 +334,6 @@ We can run ad-hoc commands on managed hosts with the module “command”.
 The module can be found at
 
 https://docs.ansible.com/ansible/latest/modules/command_module.html?highlight=command
-
 
 Let’s find out if the module cab me executed as an ad-hoc command
 
@@ -1195,4 +1194,146 @@ After this execution, the application will be up and running and the server will
 
 === How to use Ansible Tower to speed up and get more control on Ansible.
 
-to be continue...
+From Ansible Tower Documentation we can obtain a very brief description of hat Tower is and how it can help us to be more productives.
+
+"Ansible Tower (formerly ‘AWX’) is a web-based solution that makes Ansible even more easy to use for IT teams of all kinds. It’s designed to be the hub for all of your automation tasks.
+
+Tower allows you to control access to who can access what, even allowing sharing of SSH credentials without someone being able to transfer those credentials. Inventory can be graphically managed or synced with a wide variety of cloud sources. It logs all of your jobs, integrates well with LDAP, and has an amazing browsable REST API. Command line tools are available for easy integration with Jenkins as well. Provisioning callbacks provide great support for autoscaling topologies."
+
+The first step we need to take is installing Tower in a server. For this workshop's purpose we are going to install the Tower application in the same server as ansible was installed in the first place. For this, we propose to create a playbook for automating this installation.
+
+login in the ansile server, go to /root/ansible and create the following playbook.
+
+[source,bash]
+---------------------
+# vim installTower.yml
+
+---
+  - hosts: tower
+
+    name: Ansible Tower Installation
+    gather_facts: no
+
+    vars:
+      dest: '/root/tower'
+      source: 'https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz'
+      filename: 'ansible-tower-setup-latest.tar.gz'
+
+    tasks:
+
+    - name: installing tar package
+      yum:
+        name: tar
+        state: latest
+
+    - name: Create a directory if it does not exist
+      file:
+        path: '{{ dest }}'
+        state: directory
+        mode: '0700'
+
+    - name: Getting the software
+      get_url:
+        url: '{{ source }}'
+        dest: '{{ dest }}/{{ filename }}'
+
+    - name: Extracting package
+      unarchive:
+        src: '{{ dest }}/ansible-tower-setup-latest.tar.gz'
+        dest: '{{ dest }}/.'
+        remote_src: yes
+
+    - name: get the final directory
+      shell: 'ls -d {{dest}}/*/'
+      register: finalDir
+
+    - name: Setting admin password
+      lineinfile:
+        path: '{{ finalDir.stdout }}inventory'
+        state: present
+        regexp: "^admin_password=''"
+        line: "admin_password='ltodemos'"
+
+    - name: Setting database password
+      lineinfile:
+        path: '{{ finalDir.stdout }}inventory'
+        state: present
+        regexp: "^pg_password=''"
+        line: "pg_password='ltodemos'"
+
+    - name: Setting rabbit mq password
+      lineinfile:
+        path: '{{ finalDir.stdout }}inventory'
+        state: present
+        regexp: "^rabbitmq_password=''"
+        line: "rabbitmq_password='ltodemos'"
+
+    - name: Installing Tower
+      shell: './setup.sh'
+      args:
+        chdir: '{{ finalDir.stdout }}'
+      register: output
+      
+    - name: Reboot host and wait for it to restart
+      reboot:
+        msg: "Rebootng the server"
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: "whoami"
+
+---------------------
+
+This playbook can be executed using the ansible-playbook command as follows. The inventory file need to be modified though.
+
+[source,bash]
+---------------------------------
+# vim inventory
+
+[managedhosts]
+192.168.56.119
+
+[tower]
+192.168.56.120
+
+# ansible-playbook installTower -i .
+
+PLAY [Ansible Tower Installation] ****************************************************************************************************************************
+
+TASK [installing tar package] ********************************************************************************************************************************
+ok: [localhost]
+
+TASK [Create a directory if it does not exist] ***************************************************************************************************************
+ok: [localhost]
+
+TASK [Getting the software] **********************************************************************************************************************************
+ok: [localhost]
+
+TASK [Extracting package] ************************************************************************************************************************************
+changed: [localhost]
+
+TASK [get the final directory] *******************************************************************************************************************************
+changed: [localhost]
+
+TASK [Setting admin password] ********************************************************************************************************************************
+changed: [localhost]
+
+TASK [Setting database password] *****************************************************************************************************************************
+changed: [localhost]
+
+TASK [Setting rabbit mq password] ****************************************************************************************************************************
+changed: [localhost]
+
+TASK [Installing Tower] **************************************************************************************************************************************
+changed: [localhost]
+
+TASK [Reboot host and wait for it to restart] ****************************************************************************************************************
+---------------------------------
+
+The playbook change the *inventory* configuration file in those lines where a password is needed. In particular for *admin account*. The password we are changing to is *ltodemos*. *Admin + ltodemos* is going to be our credentials to access the service using:
+
+[source,bash]
+---------------------------------
+http://192.168.56.120
+---------------------------------
