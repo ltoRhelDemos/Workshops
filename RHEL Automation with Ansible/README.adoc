@@ -1356,6 +1356,8 @@ Now it is time to create Job Template. From the Ansible Tower Documentation we h
 
 A job template is a visual realization of an ansible-playbook command and all the flags needed for execute the job. A job template defines the combination of a playbook from a project, an inventory, a credential and any other Ansible parameters required to run.
 
+*Creating a Project*
+
 Let's stablish what we need to do for creating and executing a job template. In the first place we need to create a project. From official documentation "A Project is a logical collection of Ansible playbooks, represented in Tower." So, projects are mechanisms of defining a set of playbooks to pursue a goal.
 
 For example, in our workshop, our goal is to install the ansible chatbot appplication. So, we need to create a project where all the playbooks created previously need to be defined. For doing this, we have two mechanisms. The first one is the reccomended one which is to define a SCN repository for storing all the components of pur playbooks. 
@@ -1371,7 +1373,51 @@ Ansible tower maintains /var/lib/awx/projects/ in which we can crate sub-folders
 # chown -R awx:awx /var/lib/awx/projects/python-ansible-chatbot-playbooks
 -------------------------
 
-We have cloned the repository now all the playbooks created in this workshop are part of a project directory. This is going to be used in the project creation from tower gui.
+We have cloned the repository now all the playbooks created in this workshop are part of a project directory. This is going to be used in the project creation from tower gui. Go to project and push the PLUS button, then fill out all the values as the following image depicted.
+
+image::tower-project.png[adding a project for chatbot installation]
+
+*Creating Credentias*
+
+In precious parts of this workshop we generated a ssh key on the ansible server, then copy it to each ansible host (managedhosts) where the playbooks were going to be executed. way there is no need to authenticate againts those servers useing username and password. Now we can do the same, but instead we are going to create a credential for these servers in order to authenticate using the root account. First select Credentials at the left menu and then push the PLUS button.
+
+image::tower-credentials-add.png[Adding a credential]
+
+Then fill out all the fields as depicted in the following image.
+
+image::tower-credentials-machine.png[Credential creation]
+
+After saving the credential is ready to be used in our next step.
+
+*Creating an Inventory*
+
+As in the command line, Tower requires an inventory to work against. In this case we are going to create one, indicating the managed host where we are going to operate with our job template.
+
+Follow the steps depicted in the following images.
+
+image::tower-inventory-add.png[Push the PLUS button then Inventory in the pull down menu]
+
+image::tower-inventory-name.png[Fill out the fields and push the save button]
+
+image::tower-inventory-groups.png[Push the groups button and then the PLSU button]
+
+image::tower-inventory-groups-name.png[Fill out the fields and push the save button]
+
+image::tower-inventory-hosts.png[Now push the hosts button and the the PLUS button]
+
+image::tower-inventory-hosts-name.png[Fill out the fields and push the save button]
+
+image::tower-inventory-hosts-groups.png[Push the groups button and in the emergent window select managedhosts group previosly created, then press save]
+
+image::tower-inventory-hosts-groups-assigned.png[After saving the host is assigned to the managedhosts group]
+
+
+
+
+
+
+
+
 
 
 
