@@ -1427,7 +1427,21 @@ After saving the host is assigned to the managedhosts group
 
 image::tower-inventory-hosts-groups-assigned.png[]
 
+*Creating a Job Template*
 
+Finally we are going to create a job template that we could execute or lauch to execute the chatbot installation playbooks.
+
+In our case, we are going to create the template using the chatbotMasterPlaybook.yml
+
+Follow the steps depicted in the following inages.
+
+Choose the Templates menu item on the left and push the PLUS button choosing Job template in the pull-down menu.
+
+image::tower-template-add.png[]
+
+Fill out all the fields in the image, choosing the inventory, project, playbook and credentials to be used, then save.
+
+image::tower-template-name.png[]
 
 
 
