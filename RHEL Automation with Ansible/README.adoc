@@ -1397,35 +1397,37 @@ Follow the steps depicted in the following images.
 
 Push the PLUS button then Inventory in the pull down menu
 
-image::tower-inventory-add.png
+image::tower-inventory-add.png[]
 
 Fill out the fields and push the save button
 
-image::tower-inventory-name.png
+image::tower-inventory-name.png[]
 
 Push the groups button and then the PLSU button
 
-image::tower-inventory-groups.png
+image::tower-inventory-groups.png[]
 
 Fill out the fields and push the save button
 
-image::tower-inventory-groups-name.png
+image::tower-inventory-groups-name.png[]
 
 Now push the hosts button and the the PLUS button
 
-image::tower-inventory-hosts.png
+image::tower-inventory-hosts.png[]
 
 Fill out the fields and push the save button
 
-image::tower-inventory-hosts-name.png
+image::tower-inventory-hosts-name.png[]
 
 Push the groups button and in the emergent window select managedhosts group previosly created, then press save
 
-image::tower-inventory-hosts-groups.png
+image::tower-inventory-hosts-groups.png[]
 
 After saving the host is assigned to the managedhosts group
 
-image::tower-inventory-hosts-groups-assigned.png
+image::tower-inventory-hosts-groups-assigned.png[]
+
+
 
 
 
