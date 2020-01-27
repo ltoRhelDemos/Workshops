@@ -1350,6 +1350,29 @@ When accessing Tower and register it using the license obtained in the previous 
 
 image::tower-dashboard.png[Tower Dashboard]
 
-Now it is time to create Job Template.
+Now it is time to create Job Template. From the Ansible Tower Documentation we have extrated:
+
+"A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams. While the REST API allows for the execution of jobs directly, Tower requires that you first create a job template."
+
+A job template is a visual realization of an ansible-playbook command and all the flags needed for execute the job. A job template defines the combination of a playbook from a project, an inventory, a credential and any other Ansible parameters required to run.
+
+Let's stablish what we need to do for creating and executing a job template. In the first place we need to create a project. From official documentation "A Project is a logical collection of Ansible playbooks, represented in Tower." So, projects are mechanisms of defining a set of playbooks to pursue a goal.
+
+For example, in our workshop, our goal is to install the ansible chatbot appplication. So, we need to create a project where all the playbooks created previously need to be defined. For doing this, we have two mechanisms. The first one is the reccomended one which is to define a SCN repository for storing all the components of pur playbooks. 
+
+The second method is using a local place to store the playbooks. for simplicity we are going to use this last method. 
+
+Ansible tower maintains /var/lib/awx/projects/ in which we can crate sub-folders for our projects. We need to be sure the folders and its content are accesible by the user *awx*.
+
+[source,bash]
+-------------------------
+# cd /var/lib/awx/projects/
+# git clone https://github.com/ltoRhelDemos/python-ansible-chatbot-playbooks.git
+# chown -R awx:awx /var/lib/awx/projects/python-ansible-chatbot-playbooks
+-------------------------
+
+We have cloned the repository now all the playbooks created in this workshop are part of a project directory. This is going to be used in the project creation from tower gui.
+
+
 
 
