@@ -1337,3 +1337,19 @@ The playbook change the *inventory* configuration file in those lines where a pa
 ---------------------------------
 http://192.168.56.120
 ---------------------------------
+
+The login screen will prompt for a user and a password. Use *admin* username and *ltodemos* password to access tower app from the browser.
+
+image::tower-login.png[Login Screen]
+
+For using Tower we need to request a Trial license in http://ansible.con/license.
+
+image::tower-license.png[Tower license can be purchased or requested as a Trial license to test the product]
+
+When accessing Tower and register it using the license obtained in the previous step you'll be able to see the dashboard as we depicted it in the following image.
+
+image::tower-dashboard.png[Tower Dashboard]
+
+Now it is time to create Job Template.
+
+
