@@ -1443,6 +1443,14 @@ Fill out all the fields in the image, choosing the inventory, project, playbook 
 
 image::tower-template-name.png[]
 
+After saving the template is going to be ready to be launched, in this case becoming a running job.
+
+image::tower-template-list.png[]
+
+When we lauch the template a job is created and automatically resirected to its information screen.
+
+image::tower-template-job.png[]
+
 
 
 
