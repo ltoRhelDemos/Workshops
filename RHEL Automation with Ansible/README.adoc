@@ -639,7 +639,7 @@ Let's start for creating this playbook.
 
 [source,bash]
 ----------------------
-# vim installChatBotPythonDependencies.yml
+# vim chatbotInstallPythonDependencies.yml
 
 ---
   - hosts: managedhosts
@@ -976,6 +976,7 @@ Now that we are sure the application is installed and everything goes well its t
 
 [source,bash]
 ----------------------
+# vim chatbotStartServices.yml
 ---
   - hosts: managedhosts
     name: Starting chatbot services
