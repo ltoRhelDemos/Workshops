@@ -9,13 +9,13 @@
 
 == Description
 
-In this workshop we will be showing an important part of any platform administration, which is the operating system management. A lot of the tasks with the operating system are manual and repetitive, and impose several disadvantages regarding time spent in such activities, complexity associated to management procedures, lack of control in more complex activities and errors in which the administrator could be involved due to the human nature.
+In this workshop we will be showing an important part of any platform administration, which is the operating system management. A lot of the tasks with the operating system are manual and repetitive, and impose several disadvantages regarding time spent in such activities, complexity associated with management procedures, lack of control in more complex activities and errors in which the administrator could be involved due to human nature.
 
 Much has been said and written about the new hybrid and multicloud era. At this moment in time, manual tasks supported by human intervention could be the wrong way to transit, just because the scale and complexity requires assistance to be efficient enough to keep the pace of growing.
 
 The Ansible tool, as described officially defines  "a radically simple IT automation engine that automates cloud provisioning, configuration management, application deployment, intra-service orchestration, and many other IT needs." 
 
-This workshop is aimed to show you how easy is to plan and use ansible for automating the most common administration tasks RHEL could require in a day by day basis.
+This workshop is aimed to show you how easy it is to plan and use ansible for automating the most common administration tasks RHEL could require on a day by day basis.
 
 Also, not so common tasks will be shown in order to give you the tools for your daily work in the datacenter.
 
@@ -47,7 +47,7 @@ image::dhcp_activation.png[dhcp server activation]
 === Download the RHEL 8x virtual machine
 
 
-* Download the unregistered applicance from 
+* Download the unregistered appliance from 
 https://1drv.ms/u/s!AjxeDEQoUvfXmgEVes7JRvcp-Hpc?e=FVQN1G[RHEL 8.1 virtual machine (.ova)^]
 * Import the MV to VirtualBox.
 * Rename the MV to “RHEL8x control node”.
@@ -131,7 +131,7 @@ Automation has been with us for years, indeed the evolution of humanity is based
 
 History is plagued with stories of automation. Gutenberg Printing Press, The Ford’s production line, Coffee machines, Bread Making Machine, Spotify, Amazon online, etc, etc, etc.
 
-In the IT world, the automation is even more necessary to execute repetitive tasks to bring a system to its usability state. This is where Ansible comes in this movie.
+In the IT world, automation is even more necessary to execute repetitive tasks to bring a system to its usability state. This is where Ansible comes in this movie.
 
 From https://www.ansible.com/overview/how-ansible-works we can rescue the following description:
 
@@ -217,7 +217,7 @@ ansible-2.9-for-rhel-8-x86_64-source-rpms  Red Hat Ans disabled
 # ansible --version
 ansible 2.9.2
 config file = /etc/ansible/ansible.cfg
-onfigured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+configured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
 ansible python module location = /usr/lib/python3.6/site-packages/ansible
 executable location = /usr/bin/ansible
 python version = 3.6.8 (default, Oct 11 2019, 15:04:54) [GCC 8.3.1 20190507 (Red Hat 8.3.1-4)]
@@ -227,11 +227,11 @@ python version = 3.6.8 (default, Oct 11 2019, 15:04:54) [GCC 8.3.1 20190507 (Red
 In this stage, everything is set up for going forward and start automation!
 
 == Enabling trust between Ansible control node and managed hosts
-For speed up any of the actions proposed in this workshop we recommend to create a trust domain, which is easy to do following a simple steps.
+To speed up any of the actions proposed in this workshop we recommend creating a trust domain, which is easy to do following a simple steps.
 
 ==== Log in in the control node
 
-When asks for password just press enter.
+When asking for a password just press enter.
 
 [source,bash]
 -----------------
@@ -364,7 +364,7 @@ So Far So Good!
 
 It is a good question. There are several reasons why automation could save my life as an administrator.
 
-But, let me be clear. My job is important as an administrator, and it could be even more important if I use my time and effort wisely to propose new ways of executing tasks making my company make more revenue. Isn't that be great?
+But, let me be clear. My job is important as an administrator, and it could be even more important if I use my time and effort wisely to propose new ways of executing tasks making my company make more revenue. Isn't that great?
 
 We are going to look at the different perspectives why automation is so important as far as a RHEL administration is concerned.
 
@@ -378,7 +378,7 @@ Having a tool that does exactly what it is supposed to do, all the time, could g
 
 === Minimize errors
 
-After a playbook is created and test it, it will be executed in exactly the same way, all the time. No human errors due to misspelled commands or enter key error.
+After a playbook is created and tested, it will be executed in exactly the same way, all the time. No human errors due to misspelled commands or enter key error.
 
 === Execute complex tasks in a consistent way
 
@@ -389,7 +389,7 @@ Every time a procedure is executed, no matter how complex it is, administrators 
 Ansible can assist to execute tasks in 1, 2 or n servers, locally or remotely located. The real power of ansible is the ability to delegate complex and extensive jobs to the angine in order to it to take care of the execution cna completion.
 Document well my job
 
-One of the nice features of ansible is that the output of every playbook executed could be used to document what happened in every run. This is a proof of execution that can be used to create more complex management document.
+One of the nice features of ansible is that the output of every playbook executed could be used to document what happened in every run. This is proof of execution that can be used to create more complex management documents.
 
 === Get more confident in what I am doing in a production environment
 
@@ -422,11 +422,11 @@ In the example below the ip address of the managed host in the lab is 192.168.56
 
 === Why?
 
-Be repeatable when an application deployment is concern is crucial to survive in this automated world, where virtualization and cloud naive applications have taken control of a lot of aspects of our data centers.
+Be repeatable when an application deployment is concerned is crucial to survive in this automated world, where virtualization and cloud naive applications have taken control of a lot of aspects of our data centers.
 
 Having the ability to deploy complex layouts and architectures in a virtualized environment, on-premise or not, is part of being at the speed of the 4th revolution.
 
-Automated scalability in much cases is the name of the game, so whether it is the first time the application is deployed or several instances are needed to keep up with the demand, we need tools that keep us apart from the time consuming and error prone manual tasks.
+Automated scalability in many cases is the name of the game, so whether it is the first time the application is deployed or several instances are needed to keep up with the demand, we need tools that keep us apart from the time consuming and error prone manual tasks.
 
 This workshop has the main goal of showing you how to use ansible to deploy an application, from the RHEL management perspective.
 
@@ -434,7 +434,7 @@ Let’s get our hands dirty from now on...
 
 === The application
 
-For this workshop we are going to implement a simple yet powerful general purpose application that could be used for multiple purposes. This app is a simple service provider that can be customized for any requirement in which exists the necessity of access the services to obtain something… bare with me, so I am going to explain this in detail.
+For this workshop we are going to implement a simple yet powerful general purpose application that could be used for multiple purposes. This app is a simple service provider that can be customized for any requirement in which there exists the necessity of access to the services to obtain something… bare with me, so I am going to explain this in detail.
 
 === The architecture
 
@@ -442,20 +442,20 @@ image::apparchitecture.png[Architecture Diagram]
 
 === The webChat layer
 
-This layer expose through the port 8080 a web interface to intercact with, also expose an api.
+This layer exposes through the port 8080 a web interface to interact with, also expose an api.
 
 * https://server_ip:8080/chat redirect to the app
 * https://server_ip:8080/api?chat&question= define a simple api to ask to the service
 
-Needless to say that it need the engine up&running for working properly.
+Needless to say that it needs the engine up & running for working properly.
 
 === The engine layer
 
-This layer expose through the port 9095 via linux sockets a chat service.
+This layer exposes through the port 9095 via linux sockets a chat service.
 
 * server_ip:9095/chat can be interrogated with an ansible question.
 
-This service is essetial for the webChat layer to work properly.
+This service is essential for the webChat layer to work properly.
 
 === Creating the disk facilities for installing the application
 
@@ -464,9 +464,9 @@ We need to copy the source code to our managed hosts. Every managed host has 2 d
 - /dev/sdb
 - /dev/sdc
 
-We need to create a volume group out of these two devices. This volume group will be named as *chatbotVG*. Inside this volume group we are going to create a logical volume named *data*. This logical volume will be mounted in a directory called /home/chatbot. This needs to be translated to a Playbook for automating this OS admin tasks in a consistend way.
+We need to create a volume group out of these two devices. This volume group will be named as *chatbotVG*. Inside this volume group we are going to create a logical volume named *data*. This logical volume will be mounted in a directory called /home/chatbot. This needs to be translated to a Playbook for automating this OS admin tasks in a consistent way.
 
-Let´s begin by checking that boths devices are present
+Let's begin by checking that boths devices are present
 
 [source,bash]
 ---------------------
@@ -484,7 +484,7 @@ Let´s begin by checking that boths devices are present
             set_fact: proceedWithInstallation=yes
             when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] 
         rescue:
-          - name: Device /dev/sdb does not exists!
+          - name: Device /dev/sdb does not exist!
             set_fact: proceedWithInstallation=no
           
 
@@ -494,23 +494,23 @@ Let´s begin by checking that boths devices are present
             set_fact: proceedWithInstallation=yes
             when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdc"] 
         rescue:
-          - name: Device /dev/sdc does not exists!
+          - name: Device /dev/sdc does not exist!
             set_fact: proceedWithInstallation=no
         when:
           - hostvars[inventory_hostname]['proceedWithInstallation']
 ...
 ---------------------
 
-Here we have coded a Block. A block able us to manage errors easily. We start with hosts: managedhosts as in inventory file has been set. For each IP address present in the group managedhosts ansible will execute the actions inside TASKS tag. 
+Here we have coded a Block. A block enables us to manage errors easily. We start with hosts: managedhosts as in inventory file has been set. For each IP address present in the group managedhosts ansible will execute the actions inside TASKS tag. 
 
 We are going to check the hostvars content, which is populated when the gather_facts module is automatically executed. In this case we are checking the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] to determine if sdb exists.
 
 [NOTE]
 hostvars is a dictionary keyed by each host.
 
-In case one or both devices are not present, a fact is created called "proceedWithInstallation" that will be useful to execute the rest of our playbook. If this variable is set to no, further installation won't be executed. This occurs in the recue clause where we use set_fact to update the proceedWithIntsllation variable.
+In case one or both devices are not present, a fact is created called "proceedWithInstallation" that will be useful to execute the rest of our playbook. If this variable is set to no, further installation won't be executed. This occurs in the rescue clause where we use set_fact to update the proceedWithIntsllation variable.
 
-After we check the existance of our devices we proceed to create the volume group and logical volume to be mounted.
+After we check the existence of our devices we proceed to create the volume group and logical volume to be mounted.
 
 [source,bash]
 --------------------
@@ -566,7 +566,7 @@ After we check the existance of our devices we proceed to create the volume grou
           - not hostvars[inventory_hostname]['proceedWithInstallation']      
 --------------------
           
-Another block is created with a *when clause* for execute the procedure if both devices are present. 
+Another block is created with a *when clause* to execute the procedure if both devices are present. 
 
 The playbook proceed with the following:
 
@@ -614,28 +614,27 @@ PLAY RECAP *********************************************************************
 
 ------------------
 
-Every task have some hints of what just happened. 
+Every task has some hints of what just happened. 
 
-* changed. Is showed when the task has been successfully executed and the action change something in the remote host. This could be that, for example, the filesystem that did not exist was created.
+* changed. It is shown when the task has been successfully executed and the action changes something in the remote host. This could be that, for example, the filesystem that did not exist was created.
 
-* ok: nothing was changed on the remote host because, by the idempotnet nature, ansible determined nothing had to be done in order to get the result expected.
+* ok: nothing was changed on the remote host because, by the idempotent nature, ansible determined nothing had to be done in order to get the result expected.
 
-* skipping: By a conditional condition, the task was skipped. In this playbook, a task that expect an error was not executed because there were no errorers in the execution.
+* skipping: By a conditional condition, the task was skipped. In this playbook, a task that expects an error was not executed because there were no errorrs in the execution.
 
 [NOTE] 
-At this stage, the filesystem was created and mounted on /home/chatbot. This directory will be used for clonning the github repository where the application is stored.
+At this stage, the filesystem was created and mounted on /home/chatbot. This directory will be used for cloning the github repository where the application is stored.
 
 === installing the application dependencies.
 
-The chatbot appication is python 3 based, so we need to install python 3 on our remote servers. We are going to create a playbook to 
-for installing this package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an *idempotent tool*. Ansible will look to get to the desired stated (installed). If the package or the  libraries are already installed any of the actions assotiated will be executed.
+The chatbot application is python 3 based, so we need to install python 3 on our remote servers. We are going to create a playbook for installing this package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an *idempotent tool*. Ansible will look to get to the desired stated (installed). If the package or the  libraries are already installed any of the actions associated will be executed.
 
 [NOTE] 
-Also, we will need to install git in order to the remote host be able to clone the chatbot application repository.
+Also, we will need to install git in order for the remote host to be able to clone the chatbot application repository.
 
-Let's start for creating this playbook.
+Let's start by creating this playbook.
 
-[NOTE] by now, we are creating independent Playbooks as big blocks as far as simplicity of explanation is concerned. At the end we will be using Ansible import_playbook directive to import every individual playbook and execute them as a whole.
+[NOTE] by now, we are creating independent Playbooks as big blocks as far as simplicity of explanation is concerned. At the end we will be using the Ansible import_playbook directive to import every individual playbook and execute them as a whole.
 
 [source,bash]
 ----------------------
@@ -678,13 +677,13 @@ Let's start for creating this playbook.
           name: flask
 ----------------------
 
-We don´t need to gather facts in this playbook, because we don´t need any host based variable to execute tasks, so we can speed up the execution of this playbook using the gather_fact module.
+We don't need to gather facts in this playbook, because we don´t need any host based variable to execute tasks, so we can speed up the execution of this playbook using the gather_fact module.
 
 The hosts to interact with are which are present in the managedhosts group of the inventory created previously. In our case is the IP Address 192.168.56.119.
 
 The tasks define for this stage are:
 
-* At first place we need to be sure python 3.6 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the *yum module* which needs the package name (in this case python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
+* First, we need to be sure python 3.6 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the *yum module* which needs the package name (in this case python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
 
 - name: python36
 - state: latest
@@ -694,7 +693,7 @@ The tasks define for this stage are:
 - name: git
 - state: latest
 
-* The following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numerical calculationsm, tflearn and tensorflow for applying artificial inteligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The *pip module* only needs the *name* of the libraries that need to be installed.
+* The following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numerical calculations, tflearn and tensorflow for applying artificial intelligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The *pip module* only needs the *name* of the libraries that need to be installed.
 
 [source,bash]
 ----------------------
@@ -728,7 +727,7 @@ PLAY RECAP *********************************************************************
 
 ----------------------
 
-The first two tasks installs python and git, then it continues with the actions associated with libraries installation using the *module pip*. Each one is in charge of taking the library to the state desired, by default is "installed".
+The first two tasks installs python and git, then it continues with the actions associated with libraries installation using the *module pip*. Each one is in charge of taking the library to the state desired, by default it is "installed".
 
 At the end of the execution output you can notice a PLAY RECAP, which in turns indicates that 6 things were changed, in this case the installation of python 3.6, git and the installation of nlt, tflearn, tensorflow and flask libraries.
 
@@ -739,13 +738,13 @@ PLAY RECAP *********************************************************************
 ----------------------
 
 [NOTE] 
-In this stage we are sure all re pre-requisites are met for installing the appplication.
+In this stage we are sure all re prerequisites are met for installing the application.
 
 === Installing the software in its final destination
 
 For this phase, we need to clone the chatbot repository from github in the remote /home/chatbot filesystem. This directory contains all the sources and data needed to execute the ansible chat service.
 
-We also need to open ports to get the application running propoerly and create the configuration files to manage the application as a service using the systemd facility.
+We also need to open ports to get the application running properly and create the configuration files to manage the application as a service using the systemd facility.
 
 [source,bash]
 ----------------------
@@ -757,7 +756,7 @@ We also need to open ports to get the application running propoerly and create t
     gather_facts: no
     tasks:
 
-    - name: Clonning the chatbot software repository
+    - name: Cloning the chatbot software repository
       git:
         repo: 'https://github.com/ltoRhelDemos/python-ansible-chatbot.git'
         dest: /home/chatbot/
@@ -777,13 +776,13 @@ We also need to open ports to get the application running propoerly and create t
         remote_src: yes
         mode: '0644'
 
-    - name: Openning the webservice port 8080
+    - name: Opening the webservice port 8080
       firewalld:
         port: 8080/tcp
         permanent: yes
         state: enabled
 
-    - name: Openning the engine port 9095
+    - name: Opening the engine port 9095
       firewalld:
         port: 9095/tcp
         permanent: yes
@@ -797,10 +796,10 @@ We also need to open ports to get the application running propoerly and create t
 
 The following steps are done:
 
-* Using the *git module* we are clonning the chatbot application repository on /home/chatbot fliesystem
-* The *copy module* is used copy the two configuration files need for systemd to start, stop, enable, disable and get the status of our services, the chatbot engine and the web interface service.
+* Using the *git module* we are cloning the chatbot application repository on /home/chatbot filesystem
+* The *copy module* is used to copy the two configuration files needed for systemd to start, stop, enable, disable and get the status of our services, the chatbot engine and the web interface service.
 * Then we use the *firewalld module* in order to open the ports 8085 and 9095 (tcp) making them permanent.
-* Finnally with the *service module* we restart firewalld.
+* Finally with the *service module* we restart firewalld.
 
 [source,bash]
 ----------------------
@@ -808,7 +807,7 @@ The following steps are done:
 
 PLAY [Installing chatbot software] ***************************************************************************************************************************************
 
-TASK [Clonning the chatbot software repository] **************************************************************************************************************
+TASK [Cloning the chatbot software repository] **************************************************************************************************************
 changed: [192.168.56.126]
 
 TASK [copying ansibleChatbot.service template to /etc/systemd/system] ****************************************************************************************
@@ -817,10 +816,10 @@ changed: [192.168.56.126]
 TASK [copying ansibleChatbotWebInterface.service template to /etc/systemd/system] ****************************************************************************
 changed: [192.168.56.126]
 
-TASK [Openning the webservice port 8080] *********************************************************************************************************************
+TASK [Opening the webservice port 8080] *********************************************************************************************************************
 changed: [192.168.56.126]
 
-TASK [Openning the engine port 9095] *************************************************************************************************************************
+TASK [Opening the engine port 9095] *************************************************************************************************************************
 changed: [192.168.56.126]
 
 TASK [restarting the firewalld] ******************************************************************************************************************************
@@ -831,9 +830,9 @@ PLAY RECAP *********************************************************************
 
 ----------------------
 
-The playbook is executed successfully having 6 changes made, in this case the repo clonning, the systemd configuration files copyed to /etc/systemd/system directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart.
+The playbook is executed successfully having 6 changes made, in this case the repo cloning, the systemd configuration files copied to /etc/systemd/system directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart.
 
-Now our application is in the managed host ready to be executed to start the chat service. Let's first try to execute manually the engine on the managed host.
+Now our application is in the managed host ready to be executed to start the chat service. Let's first try to execute the engine manually on the managed host.
 
 [source,bash]
 ----------------------
@@ -859,7 +858,7 @@ Now our application is in the managed host ready to be executed to start the cha
 --------------------------------------------------------------------------
 HELP:
 --------------------------------------------------------------------------
-to start server using other than default values use it with the paramaters:
+to start server using other than default values use it with the parameters:
    serviceProvider.py [port=9095] [homedir=/tmp] [serviceName=serviceProvider] [verbose=True]
 
 to stop the server:
@@ -888,7 +887,7 @@ This service is event driven, which means that it will get into an endless loop 
 From the control host we can try to access the engine with Ncat command.
 
 [NOTE]
-The sintax is very simple. Use the command "chat", then the parameter "question" followed by an equal sign "=" and the question substituing the spaces by underscores "_"
+The syntax is very simple. Use the command "chat", then the parameter "question" followed by an equal sign "=" and the question substituting the spaces by underscores "_"
 
 [source,bash]
 ----------------------
@@ -906,7 +905,7 @@ The sintax is very simple. Use the command "chat", then the parameter "question"
 
 ----------------------
 
-As you can see, the engine is able to classify your questions and respond accordingly. The sintax for asking question is very simple.
+As you can see, the engine is able to classify your questions and respond accordingly. The syntax for asking questions is very simple.
 
 If we need to stop the service, we only are required to send a "stop" directive.
 
@@ -916,7 +915,7 @@ If we need to stop the service, we only are required to send a "stop" directive.
 ----------------------
 
 [NOTE] 
-Because this is an example service provider there is not security associated for stopping the service arbitratily.
+Because this is an example service provider there is not security associated for stopping the service arbitrarily.
 
 *The webChat*
 
@@ -968,11 +967,11 @@ The response on the browser should be:
 
 [NOTE] 
 
-Now it is time to start de application as a service and automate the application starting procedure with systemd. That is the goal of the following playbook.
+Now it is time to start the application as a service and automate the application starting procedure with systemd. That is the goal of the following playbook.
 
 === Automating the starting of the chat service
 
-Now that we are sure the application is installed and everything goes well its time to automate the service start at boot time.
+Now that we are sure the application is installed and everything goes well it's time to automate the service start at boot time.
 
 [source,bash]
 ----------------------
@@ -997,7 +996,7 @@ Now that we are sure the application is installed and everything goes well its t
           enabled: yes
 ----------------------
 
-Enabling the services is an easy task using *systemd module*. For both services we are going to start them with the *enable* directive in order to ansible not only to start the services but making them automatically restartable at boot time.
+Enabling the services is an easy task using *systemd module*. For both services we are going to start them with the *enable* directive in order to ansible, not only to start the services, but making them automatically restarting at boot time.
 
 Let's execute the playbook.
 
@@ -1017,13 +1016,13 @@ PLAY RECAP *********************************************************************
 192.168.56.126             : ok=2    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ----------------------
 
-After the execution we see that both services were chaged to started.
+After the execution we see that both services were changed to *started*.
 
-The goal of the playbook is, finally, having the chatbot service up&running. After this we can check the service on the browser using the following address *https://192.168.56.119:8080/chat*.
+The goal of the playbook is, finally, having the chatbot service up & running. After this we can check the service on the browser using the following address *https://192.168.56.119:8080/chat*.
 
 === Booting the server and check the services are Up & Running
 
-This is the final step to be done in order to guaratee the service will survive to the server boot. In this case, the following playbook only execute a reboot and wait for the server to boot up.
+This is the final step to be done in order to guarantee the service will survive to the server boot. In this case, the following playbook only execute a reboot and wait for the server to boot up.
 
 [source,bash]
 ----------------------
@@ -1044,7 +1043,7 @@ This is the final step to be done in order to guaratee the service will survive 
         test_command: "systemctl is-active ansibleChatbot --quiet && systemctl is-active --quit ansibleChatbotWebInterface"
 ----------------------
 
-The playbook uses the *reboot module* in which we are specifying to wait 30 seconds until the server is up again. Also look at the test_command parameter at the end. We are using a composed bash sheel command using systemd with is-active parameter which, is both service are up, returns 0. 
+The playbook uses the *reboot module* in which we are specifying to wait 30 seconds until the server is up again. Also look at the test_command parameter at the end. We are using a composed bash shell command using systemd with is-active parameter which, is both service are up, returns 0. 
 
 [source,bash]
 ----------------------
@@ -1068,17 +1067,17 @@ We have been creating ans executing different playbooks for different tasks:
 
 * *chatbotCreateFileSystem.yml* for Creating the filesystem and mount /home/chatbot to receive the application
 * *chatbotInstallPythonDependencies.yml* for Installing all software dependencies
-* *chatbotInstallSoftware.yml* for installing the appplication itself and some configuration files
+* *chatbotInstallSoftware.yml* for installing the application itself and some configuration files
 * *chatbotStartServices.yml* for starting the services and make them permanent after reboot
 * *chatbotRebootServer.yml* for rebooting the server and check the services were invoked successfully after reboot
 
-This complete a whole installation cycle of the chatbot. But how to execute this using one playbook?.
+This completes the whole installation cycle of the chatbot. But how to execute this using one playbook?.
 
-Two ways we can use to do create a unique playbook that can be executed by ansible.
+Two ways we can use to create a unique playbook that can be executed by ansible.
 
 * Using import_playbook in order to import all the playbooks created previously. 
 
-Let´s create a masterPlaybook.
+Let's create a masterPlaybook.
 
 [source,bash]
 ----------------------
@@ -1153,7 +1152,7 @@ changed: [192.168.56.119]
 
 PLAY [Installing chatbot software] ******************************************************************************************************************************************
 
-TASK [Clonning the chatbot software repository] **************************************************************************************************************
+TASK [Cloning the chatbot software repository] **************************************************************************************************************
 changed: [192.168.56.119]
 
 TASK [copying ansibleChatbot.service template to /etc/systemd/system] ****************************************************************************************
@@ -1162,10 +1161,10 @@ changed: [192.168.56.119]
 TASK [copying ansibleChatbotWebInterface.service template to /etc/systemd/system] ****************************************************************************
 changed: [192.168.56.119]
 
-TASK [Openning the webservice port 8080] *********************************************************************************************************************
+TASK [Opening the webservice port 8080] *********************************************************************************************************************
 changed: [192.168.56.119]
 
-TASK [Openning the engine port 9095] *************************************************************************************************************************
+TASK [Opening the engine port 9095] *************************************************************************************************************************
 changed: [192.168.56.119]
 
 TASK [restarting the firewalld] ******************************************************************************************************************************
@@ -1189,19 +1188,19 @@ PLAY RECAP *********************************************************************
 
 ----------------------
 
-After this execution, the application will be up and running and the server will be accessible to interct with.
+After this execution, the application will be up and running and the server will be accessible to interact with.
 
-* Other way to consolidate all the playbooks created is saving all individual files in a consolidated playbook. This way only one file needs to be saved and executed. The drawbacks of this approach is the scalability. The modularity of manipulating isolated playbooks and then combined on one master using imports is much more maintainable, easy to read and scalable.
+* Another way to consolidate all the playbooks created is saving all individual files in a consolidated playbook. This way only one file needs to be saved and executed. The drawbacks of this approach is the scalability. The modularity of manipulating isolated playbooks and then combined on one master using imports is much more maintainable, easy to read and scalable.
 
 === How to use Ansible Tower to speed up and get more control on Ansible.
 
-From Ansible Tower Documentation we can obtain a very brief description of hat Tower is and how it can help us to be more productives.
+From Ansible Tower Documentation we can obtain a very brief description of what Tower is and how it can help us to be more productives.
 
 "Ansible Tower (formerly ‘AWX’) is a web-based solution that makes Ansible even more easy to use for IT teams of all kinds. It’s designed to be the hub for all of your automation tasks.
 
 Tower allows you to control access to who can access what, even allowing sharing of SSH credentials without someone being able to transfer those credentials. Inventory can be graphically managed or synced with a wide variety of cloud sources. It logs all of your jobs, integrates well with LDAP, and has an amazing browsable REST API. Command line tools are available for easy integration with Jenkins as well. Provisioning callbacks provide great support for autoscaling topologies."
 
-The first step we need to take is installing Tower in a server. For this workshop's purpose we are going to install the Tower application in the same server as ansible was installed in the first place. For this, we propose to create a playbook for automating this installation.
+The first step we need to take is installing Tower on a server. For this workshop's purpose we are going to install the Tower application in the same server as ansible was installed in the first place. For this, we propose to create a playbook for automating this installation.
 
 login in the ansile server, go to /root/ansible and create the following playbook.
 
@@ -1277,7 +1276,7 @@ login in the ansile server, go to /root/ansible and create the following playboo
       
     - name: Reboot host and wait for it to restart
       reboot:
-        msg: "Rebootng the server"
+        msg: "Rebooting the server"
         connect_timeout: 5
         reboot_timeout: 600
         pre_reboot_delay: 0
@@ -1343,7 +1342,7 @@ The login screen will prompt for a user and a password. Use *admin* username and
 
 image::tower-login.png[Login Screen]
 
-For using Tower we need to request a Trial license in http://ansible.con/license.
+To use Tower we need to request a Trial license in http://ansible.con/license.
 
 image::tower-license.png[Tower license can be purchased or requested as a Trial license to test the product]
 
@@ -1351,7 +1350,7 @@ When accessing Tower and register it using the license obtained in the previous 
 
 image::tower-dashboard.png[Tower Dashboard]
 
-Now it is time to create Job Template. From the Ansible Tower Documentation we have extrated:
+Now it is time to create a Job Template. From the Ansible Tower Documentation we have extracted:
 
 "A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams. While the REST API allows for the execution of jobs directly, Tower requires that you first create a job template."
 
@@ -1359,13 +1358,13 @@ A job template is a visual realization of an ansible-playbook command and all th
 
 *Creating a Project*
 
-Let's stablish what we need to do for creating and executing a job template. In the first place we need to create a project. From official documentation "A Project is a logical collection of Ansible playbooks, represented in Tower." So, projects are mechanisms of defining a set of playbooks to pursue a goal.
+Let's establish what we need to do for creating and executing a job template. In the first place we need to create a project. From official documentation "A Project is a logical collection of Ansible playbooks, represented in Tower." So, projects are mechanisms of defining a set of playbooks to pursue a goal.
 
-For example, in our workshop, our goal is to install the ansible chatbot appplication. So, we need to create a project where all the playbooks created previously need to be defined. For doing this, we have two mechanisms. The first one is the reccomended one which is to define a SCN repository for storing all the components of pur playbooks. 
+For example, in our workshop, our goal is to install the ansible chatbot application. So, we need to create a project where all the playbooks created previously need to be defined. For doing this, we have two mechanisms. The first one is the recommended one which is to define a SCN repository for storing all the components of pur playbooks. 
 
-The second method is using a local place to store the playbooks. for simplicity we are going to use this last method. 
+The second method is using a local place to store the playbooks. For simplicity we are going to use this last method. 
 
-Ansible tower maintains /var/lib/awx/projects/ in which we can crate sub-folders for our projects. We need to be sure the folders and its content are accesible by the user *awx*.
+Ansible tower maintains /var/lib/awx/projects/ in which we can create sub-folders for our projects. We need to be sure the folders and its content are accessible by the user *awx*.
 
 [source,bash]
 -------------------------
@@ -1378,9 +1377,9 @@ We have cloned the repository now all the playbooks created in this workshop are
 
 image::tower-project.png[adding a project for chatbot installation]
 
-*Creating Credentias*
+*Creating Credentials*
 
-In precious parts of this workshop we generated a ssh key on the ansible server, then copy it to each ansible host (managedhosts) where the playbooks were going to be executed. way there is no need to authenticate againts those servers useing username and password. Now we can do the same, but instead we are going to create a credential for these servers in order to authenticate using the root account. First select Credentials at the left menu and then push the PLUS button.
+In precious parts of this workshop we generated a ssh key on the ansible server, then copied it to each ansible host (managedhosts) where the playbooks were going to be executed. way there is no need to authenticate against those servers using username and password. Now we can do the same, but instead we are going to create a credential for these servers in order to authenticate using the root account. First select Credentials at the left menu and then push the PLUS button.
 
 image::tower-credentials-add.png[Adding a credential]
 
@@ -1404,7 +1403,7 @@ Fill out the fields and push the save button
 
 image::tower-inventory-name.png[]
 
-Push the groups button and then the PLSU button
+Push the groups button and then the PLUS button
 
 image::tower-inventory-groups.png[]
 
@@ -1420,7 +1419,7 @@ Fill out the fields and push the save button
 
 image::tower-inventory-hosts-name.png[]
 
-Push the groups button and in the emergent window select managedhosts group previosly created, then press save
+Push the groups button and in the emergent window select managedhosts group previously created, then press save
 
 image::tower-inventory-hosts-groups.png[]
 
@@ -1434,7 +1433,7 @@ Finally we are going to create a job template that we could execute or lauch to 
 
 In our case, we are going to create the template using the chatbotMasterPlaybook.yml
 
-Follow the steps depicted in the following inages.
+Follow the steps depicted in the following images.
 
 Choose the Templates menu item on the left and push the PLUS button choosing Job template in the pull-down menu.
 
@@ -1451,6 +1450,7 @@ image::tower-template-list.png[]
 When we launch the template, a job is created and automatically redirected to its information screen where the progress screen could be observed to understand how the playbook is being executed.
 
 image::tower-template-job.png[]
+
 
 
 
