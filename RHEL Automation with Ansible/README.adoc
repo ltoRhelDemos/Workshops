@@ -521,7 +521,6 @@ After we check the existence of our devices we proceed to create the volume grou
             lvg:
               pvs: "/dev/sdb,/dev/sdc"
               vg: "chatbotVG"
-              pesize: '8'
               pv_options: '-Z y'
               force: no
               state: present
@@ -530,7 +529,7 @@ After we check the existence of our devices we proceed to create the volume grou
             lvol:
               vg: "chatbotVG"
               lv: "data"
-              size: 4g
+              size: 10g
               active: yes
               force: no
               state: present
