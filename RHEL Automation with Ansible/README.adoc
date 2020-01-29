@@ -1451,10 +1451,18 @@ When we launch the template, a job is created and automatically redirected to it
 
 image::tower-template-job.png[]
 
+The playbook is executed and the installation is completed with no errors. At this point in time the application is up and running after the server reboots and systemd starts the engine and the webchat services.
 
+Let's access the application.
 
+[source,bash]
+------------------------------
+http://192.168.56.119:8080/chat
+------------------------------
 
+image::chatbot.png[]
 
+This concludes this workshop. I Hope this information will be useful to realize in your own terms how ansible can help you to be more productive and more consistent in your daily work!
 
 
 
