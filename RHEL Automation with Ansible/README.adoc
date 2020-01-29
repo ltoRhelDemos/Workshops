@@ -696,7 +696,7 @@ The tasks define for this stage are:
 
 [source,bash]
 ----------------------
-# ansible-playbook installChatBotPythonDependencies.yml -i inventory
+# ansible-playbook installChatBotPythonDependencies.yml -i ./inventory
 
 PLAY [[Installing software dependencies] ******************************************************************************************************************************************
 
