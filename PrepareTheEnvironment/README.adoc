@@ -82,3 +82,29 @@ Fill the table below.
 
 [NOTE]
 At this point you have a RHEL 8 server totally operational.
+
+=== Creating a clone
+
+You can now create a clone of this machine for purposes that involve the interaction among servers. 
+
+* From virtualbox select the server recently imported. This server must be powered off.
+
+* Select machine/clone in the up-left menu. 
+
+* Name the new server with a meaningful name to your lab.
+
+* In the *MAC address Policy* pull-down menu select *Generate new MAC addresses for all network adapters*.
+
+* Click *Next* button.
+
+* Select *Full Clone* and click *Next*
+
+* If the server has snapshots taken you can choose *Current Machine State* or *Everything*. Take your choice and click *Clone* button.
+
+* Check the ip address for future uses.
+
+[source,bash]
+-----------------
+# ifconfig enp0s8
+-----------------
+
