@@ -1036,7 +1036,7 @@ This is the final step to be done in order to guarantee the service will survive
       reboot:
         msg: "Reboot initiated by Ansible"
         connect_timeout: 5
-        reboot_timeout: 600
+        reboot_timeout: 60
         pre_reboot_delay: 0
         post_reboot_delay: 30
         test_command: "systemctl is-active ansibleChatbotEngine --quiet && systemctl is-active --quit ansibleChatbotWebInterface"
