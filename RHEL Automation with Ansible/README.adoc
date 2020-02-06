@@ -775,22 +775,27 @@ We also need to open ports to get the application running properly and create th
         remote_src: yes
         mode: '0644'
 
-    - name: Opening the webservice port 8080
+    - name: Openning the webservice port 8080
       firewalld:
         port: 8080/tcp
         permanent: yes
         state: enabled
+      notify: "restart firewalld"
 
-    - name: Opening the engine port 9095
+    - name: Openning the engine port 9095
       firewalld:
         port: 9095/tcp
         permanent: yes
         state: enabled
+      notify: "restart firewalld"
 
+        
+    handlers:
     - name: restarting the firewalld
       service:
         name: firewalld
         state: restarted
+      listen: "restart firewalld"  
 ----------------------
 
 The following steps are done:
@@ -798,7 +803,8 @@ The following steps are done:
 * Using the *git module* we are cloning the chatbot application repository on /home/chatbot filesystem
 * The *copy module* is used to copy the two configuration files needed for systemd to start, stop, enable, disable and get the status of our services, the chatbot engine and the web interface service.
 * Then we use the *firewalld module* in order to open the ports 8085 and 9095 (tcp) making them permanent.
-* Finally with the *service module* we restart firewalld.
+* If the ports are not opened then each task send a notification to the handler that is in charge of restarting the firewalld service.
+* Only if any of the ports are opened then the handler for restarting the firewalld is triggered, rebooting the service.
 
 [source,bash]
 ----------------------
@@ -821,17 +827,17 @@ changed: [192.168.56.126]
 TASK [Opening the engine port 9095] *************************************************************************************************************************
 changed: [192.168.56.126]
 
-TASK [restarting the firewalld] ******************************************************************************************************************************
-changed: [192.168.56.126]
+RUNNING HANDLER [restarting the firewalld] **********************************************************************
+changed: [192.168.56.134]
 
-PLAY RECAP ***************************************************************************************************************************************************
+PLAY RECAP *************************************************************************************************************
 192.168.56.126             : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 
 ----------------------
 
-The playbook is executed successfully having 6 changes made, in this case the repo cloning, the systemd configuration files copied to /etc/systemd/system directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart.
+The playbook is executed successfully having 6 changes made, in this case the repository cloning, the systemd configuration files copied to /etc/systemd/system directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart (if needed).
 
-Now our application is in the managed host ready to be executed to start the chat service. Let's first try to execute the engine manually on the managed host.
+Now, our application is in the managed host ready to be executed to start the chat service. Let's first try to execute the engine manually on the managed host.
 
 [source,bash]
 ----------------------
@@ -914,7 +920,7 @@ If we need to stop the service, we only are required to send a "stop" directive.
 ----------------------
 
 [NOTE] 
-Because this is an example service provider there is not security associated for stopping the service arbitrarily.
+Because this is toy service provider there is not security associated for stopping the service arbitrarily.
 
 *The webChat*
 
