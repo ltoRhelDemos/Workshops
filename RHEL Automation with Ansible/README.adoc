@@ -482,7 +482,7 @@ Let's begin by checking that boths devices are present
         block:
           - name: checking for device /dev/sdb
             set_fact: proceedWithInstallation=yes
-            when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdb"] 
+            when:  hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdb"] 
         rescue:
           - name: Device /dev/sdb does not exist!
             set_fact: proceedWithInstallation=no
@@ -492,7 +492,7 @@ Let's begin by checking that boths devices are present
         block:
           - name: checking for device /dev/sdc
             set_fact: proceedWithInstallation=yes
-            when:  hostvars[inventory_hostname]["ansible_facts"]["device_links"]["ids"]["sdc"] 
+            when:  hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdc"] 
         rescue:
           - name: Device /dev/sdc does not exist!
             set_fact: proceedWithInstallation=no
