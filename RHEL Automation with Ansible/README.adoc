@@ -476,6 +476,9 @@ Let's begin by checking that boths devices are present
   - hosts: managedhosts
     name: Creating the chatbot filesystem
 
+    become: yes
+    become_user: root
+
     tasks:
 
       - name: check sdb
