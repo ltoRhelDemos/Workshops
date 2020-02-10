@@ -505,7 +505,7 @@ Let's begin by checking that boths devices are present
 ...
 ---------------------
 
-The playbook needs hosts to operate on. We are using here a JINJA2 template and a the "default" filter to tell Ansible that hosts to poerate on must be took from the defualt value, which is "hostsmanaged" or from "--extra-vars" values which needs to be define as "--extra-vars hosts2manage=all".  
+The playbook needs hosts to operate on. We are using here a JINJA2 template and the "default" filter to tell Ansible that hosts to operate on must be took from the defualt value, which is "hostsmanaged" or from "--extra-vars" values which needs to be defined as *--extra-vars* "hosts2manage=whichever host we need to operate on".  
 
 We need to create filessystems and mount them, and this activities need privileges, so we are instructing Ansible to escalate privileges with *become* clause set to true. We are also telling Ansible to become to the root user, with *become_user* clause, to execute all the actions defined in the playbook's *tasks* section.
 
@@ -634,14 +634,14 @@ PLAY RECAP *********************************************************************
 
 ------------------
 
-The playbook operates on the default value "hostsmanaged", nevertheless we can execute the playbook using a different hosts, just by defining the "hosts2manage" variable on the command line like this:
+The playbook operates on the default value "hostsmanaged", nevertheless we can execute the playbook using different hosts, just by defining the "hosts2manage" variable on the command line like this:
 
 [source, bash]
 ------------------
 # ansible-playbook chatbotCreateFilesystem.yml -i ./inventory --extra-vars "hosts2manage=all"
 ------------------
 
-Every task executed has some hints of what just happened. 
+Also, Every task executed has some hints of what just happened. 
 
 * changed. It is shown when the task has been successfully executed and the action changes something in the remote host. This could be that, for example, the filesystem that did not exist was created.
 
@@ -672,7 +672,7 @@ Let's start by creating this playbook.
 
 ---
   - name: Installing software dependencies
-    hosts: managedhosts
+    hosts: '{{ hosts2manage | default("managedhosts") }}'
 
     become: yes
     become_user: root
@@ -689,6 +689,11 @@ Let's start by creating this playbook.
       - name: installing git
         yum: 
           name: git
+          state: latest
+   
+      - name: installing firewalld
+        yum: 
+          name: firewalld
           state: latest
    
       - name: installing nltk
@@ -710,13 +715,22 @@ Let's start by creating this playbook.
       - name: installing flask
         pip:
           name: flask
+
+      - name: enable firewalld service
+        systemd:
+          name: firewalld
+          state: started
+          enabled: yes    
 ----------------------
 
-We don't need to gather facts in this playbook, because we don´t need any host based variable to execute tasks, so we can speed up the execution of this playbook using the *gather_fact* module.
+We don't need to gather facts in this playbook, because we don´t need any host based variable to execute tasks, so we can speed up the execution of this playbook telling Ansible not to gather information from the server is operating on, with *gather_fact*.
 
-The hosts to interact with are which are present in the *managedhosts* group of the inventory created previously. In our case is the IP Address 192.168.56.119.
+The hosts where Ansible is operating on are those present in the *managedhosts* group of the inventory created previously. In our case is the IP Address 192.168.56.119. 
 
-The tasks define for this stage are:
+[NOTE]
+You need to change the IP address according to your servers.
+
+The tasks defined for this stage are:
 
 * First, we need to be sure python 3 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the *yum* module which needs the package name (in this case python3) and the *state*. This flag tells ansible to install the package if not present or update it to the latest version if needed.
 
@@ -728,56 +742,170 @@ The tasks define for this stage are:
 *- name: git*
 *- state: latest*
 
-* The following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numerical calculations, tflearn and tensorflow for applying artificial intelligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The *pip module* only needs the *name* of the libraries that need to be installed.
+We also need to ensure firewalld is installed...
+
+* The following actions are related to the installation of some required libraries. In this case *nltk* for natural language processing, *numpy* for numerical calculations, *tflearn* and *tensorflow* for applying artificial intelligence to the chatbot, and *flask* for the creation of the web service delivered by webChat.py. The *pip* module only needs the *name* of the libraries that need to be installed.
+
+Finally at the end of the playbook we start the firewalld service and make it permanent using the "systemd" module.
 
 [source,bash]
 ----------------------
 # ansible-playbook chatbotInstallPythonDependencies.yml -i ./inventory
 
-PLAY [[Installing software dependencies] ******************************************************************************************************************************************
+PLAY [Installing software dependencies] **********************************************
 
-TASK [installing python 3.6] ************************************************************************************************************************************
+TASK [installing python 3] ***********************************************************
 changed: [192.168.56.119]
 
-TASK [installing git] ************************************************************************************************************************************
+TASK [installing git] ****************************************************************
 changed: [192.168.56.119]
 
-TASK [installing nltk] ******************************************************************************************************************************************
+TASK [installing firewalld] **********************************************************
 changed: [192.168.56.119]
 
-TASK [installing tflearn] ***************************************************************************************************************************************
+TASK [installing nltk] ***************************************************************
 changed: [192.168.56.119]
 
-TASK [installing numpy] ***************************************************************************************************************************************
+TASK [installing tflearn] ************************************************************
+changed: [192.168.56.119]
+
+TASK [installing numpy] **************************************************************
 ok: [192.168.56.119]
 
-TASK [installing tensorflow] ************************************************************************************************************************************
+TASK [installing tensorflow] *********************************************************
 changed: [192.168.56.119]
 
-TASK [installing flask] *****************************************************************************************************************************************
+TASK [installing flask] **************************************************************
 changed: [192.168.56.119]
 
-PLAY RECAP ***************************************************************************************************************************************************
-192.168.56.119             : ok=7    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+TASK [enable firewalld service] ******************************************************
+changed: [192.168.56.119]
+
+PLAY RECAP ***************************************************************************
+192.168.56.119             : ok=9    changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 
 ----------------------
 
-The first two tasks installs python and git, then it continues with the actions associated with libraries installation using the *module pip*. Each one is in charge of taking the library to the state desired, by default it is "installed".
+The first three tasks install python, git and firewalld, then it continues with the actions associated with libraries installation using the *module* pip. Each one is in charge of taking the library to the state desired, by default it is "installed". Finally firewalld is started for extra security.
 
-At the end of the execution output you can notice a PLAY RECAP, which in turns indicates that 6 things were changed, in this case the installation of python 3.6, git and the installation of nlt, tflearn, tensorflow and flask libraries.
+At the end of the execution output you can notice a *PLAY RECAP*, which in turns indicates that a number of things were changed, in this case the installation of python 3, git, firewalld, python libraries installation and if needed, the starting of firewalld service. 
 
 [source,bash]
 ----------------------
-PLAY RECAP ***************************************************************************************************************************************************
-192.168.56.119             : ok=7    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+PLAY RECAP ***************************************************************************
+192.168.56.119             : ok=9    changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ----------------------
 
 [NOTE] 
-In this stage we are sure all re prerequisites are met for installing the application.
+In this stage we are sure all prerequisites are met for installing the application.
+
+Now let's try to optimize this playbook. Remember the first directive of a developer... *Don't repeat yourself.*
+
+The following snipped playbook reflects some changes to optimize the playbook we wrote in the previous section.
+
+[source,bash]
+------------------------
+---
+  - name: Installing software dependencies
+  
+    hosts: '{{ hosts2manage | default("managedhosts") }}'
+
+    become: yes
+    become_user: root
+
+    gather_facts: no 
+    
+    tasks:
+      - name: Setting default values
+        set_fact: proceedWithInstallation=yes
+
+      - name: Installing required packages
+        block: 
+          - name: yum install...
+            yum: 
+              name: "{{ item }}"
+              state: latest
+            loop: 
+              - python3  
+              - git
+              - firewalld
+        rescue:
+          - name: Error installing required packages!
+            set_fact: proceedWithInstallation=no
+
+      - name: Installing required python libraries
+        block: 
+          - name: pip install...
+            pip: 
+              name: "{{ item }}"
+              state: latest
+            loop: 
+              - nltk
+              - tflearn
+              - numpy
+              - tensorflow
+              - flask
+        rescue:
+          - name: Error installing requires python libraries!
+            set_fact: proceedWithInstallation=no            
+
+      - name: enable firewalld service
+        systemd:
+          name: firewalld
+          state: started
+          enabled: yes
+------------------------
+
+We are using the *loop* clause on each package manager module for execute a block of code using a list. This list is defined after the *loop* clause sun "-" dash to each item to operate on.
+
+[source,bash]
+------------------------
+pip: 
+  name: "{{ item }}"
+  state: latest
+loop: 
+  - nltk
+  - tflearn
+  - numpy
+  - tensorflow
+  - flask
+------------------------
+
+Using a ninja2 template we can instruct the *pip* module to operate on name "{{ item }}", wich is instantiated for each element of the list... in this case, nltk, tflear, numpy, ...
+
+This way we can reduce the extension of the playbook and also make it more readable.
+
+[source,bash]
+----------------------
+# ansible-playbook chatbotInstallPythonDependencies.yml -i ./inventory
+
+PLAY [Installing software dependencies] **********************************************
+
+TASK [Setting default values] ********************************************************
+ok: [192.168.56.119]
+
+TASK [yum install...] ****************************************************************
+changed: [192.168.56.119] => (item=python3)
+changed: [192.168.56.119] => (item=git)
+changed: [192.168.56.119] => (item=firewalld)
+
+TASK [pip install...] ****************************************************************
+changed: [192.168.56.119] => (item=nltk)
+changed: [192.168.56.119] => (item=tflearn)
+ok: [192.168.56.119] => (item=numpy)
+changed: [192.168.56.119] => (item=tensorflow)
+changed: [192.168.56.119] => (item=flask)
+
+TASK [enable firewalld service] ******************************************************
+changed: [192.168.56.119]
+
+PLAY RECAP ***************************************************************************
+192.168.56.119             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+----------------------
 
 === Installing the software in its final destination
 
-For this phase, we need to clone the chatbot repository from github in the remote /home/chatbot filesystem. This directory contains all the sources and data needed to execute the ansible chat service.
+For this phase, we need to clone the chatbot repository from github in the remote "/home/chatbot" filesystem. This directory contains all the sources and data needed to execute the ansible chat service.
 
 We also need to open ports to get the application running properly and create the configuration files to manage the application as a service using the systemd facility.
 
@@ -836,9 +964,9 @@ We also need to open ports to get the application running properly and create th
 
 The following steps are done:
 
-* Using the *git module* we are cloning the chatbot application repository on /home/chatbot filesystem
-* The *copy module* is used to copy the two configuration files needed for systemd to start, stop, enable, disable and get the status of our services, the chatbot engine and the web interface service.
-* Then we use the *firewalld module* in order to open the ports 8085 and 9095 (tcp) making them permanent.
+* Using the *git* module we are cloning the chatbot application repository on "/home/chatbot" filesystem
+* The *copy" module is used to copy the two configuration files needed for systemd to start, stop, enable, disable and get the status of our services, the chatbot engine and the web interface service.
+* Then we use the *firewalld* module in order to open the ports 8085 and 9095 (tcp) making them permanent.
 * If the ports are not opened then each task send a notification to the handler that is in charge of restarting the firewalld service.
 * Only if any of the ports are opened then the handler for restarting the firewalld is triggered, rebooting the service.
 
@@ -846,32 +974,32 @@ The following steps are done:
 ----------------------
 # ansible-playbook chatbotInstallSoftware.yml -i ./inventory
 
-PLAY [Installing chatbot software] ***************************************************************************************************************************************
+PLAY [Installing chatbot software] ***************************************************
 
-TASK [Cloning the chatbot software repository] **************************************************************************************************************
-changed: [192.168.56.126]
+TASK [Setting reboot to "no" unless needed] ******************************************
+ok: [192.168.56.119]
 
-TASK [copying ansibleChatbotEngine.service template to /etc/systemd/system] ****************************************************************************************
-changed: [192.168.56.126]
+TASK [Clonning the chatbot software repository] **************************************
+changed: [192.168.56.119]
 
-TASK [copying ansibleChatbotWebInterface.service template to /etc/systemd/system] ****************************************************************************
-changed: [192.168.56.126]
+TASK [copying ansibleChatbotEngine.service template to /etc/systemd/system] **********
+changed: [192.168.56.119]
 
-TASK [Opening the webservice port 8080] *********************************************************************************************************************
-changed: [192.168.56.126]
+TASK [copying ansibleChatbotWebInterface.service template to /etc/systemd/system] ****
+changed: [192.168.56.119]
 
-TASK [Opening the engine port 9095] *************************************************************************************************************************
-changed: [192.168.56.126]
+TASK [Openning the webservice port 8080] *********************************************
+changed: [192.168.56.119] => (item=8080/tcp)
+changed: [192.168.56.119] => (item=9095/tcp)
 
-RUNNING HANDLER [restarting the firewalld] **********************************************************************
-changed: [192.168.56.134]
+RUNNING HANDLER [restarting the firewalld] *******************************************
+changed: [192.168.56.119]
 
-PLAY RECAP *************************************************************************************************************
-192.168.56.126             : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-
+PLAY RECAP ***************************************************************************
+192.168.56.119             : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ----------------------
 
-The playbook is executed successfully having 6 changes made, in this case the repository cloning, the systemd configuration files copied to /etc/systemd/system directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart (if needed).
+The playbook is executed successfully having 6 changes, in this case the repository cloning, the systemd configuration files copied to "/etc/systemd/system" directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart (if needed).
 
 Now, our application is in the managed host ready to be executed to start the chat service. Let's first try to execute the engine manually on the managed host.
 
