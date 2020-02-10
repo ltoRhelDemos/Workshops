@@ -508,7 +508,8 @@ Here we have coded a Block. A block enables us to manage errors easily. We start
 
 We are going to check the hostvars content, which is populated when the gather_facts module is automatically executed. In this case we are checking the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdb"] to determine if sdb exists.
 
-link: https://docs.ansible.com/ansible/latest/modules/gather_facts_module.html[gather_facts module reference]
+[NOTE]
+https://docs.ansible.com/ansible/latest/modules/gather_facts_module.html[gather_facts module reference]
 
 [NOTE]
 hostvars is a dictionary keyed by each host.
