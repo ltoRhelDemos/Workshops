@@ -473,9 +473,10 @@ Let's begin by checking that boths devices are present
 # vim chatbotCreateFilesystem.yml
 
 ---
-  - hosts: managedhosts
-    name: Creating the chatbot filesystem
-
+  - name: Creating the chatbot filesystem
+    
+    hosts: '{{ hosts2manage | default("managedhosts") }}'
+    
     become: yes
     become_user: root
 
@@ -504,9 +505,13 @@ Let's begin by checking that boths devices are present
 ...
 ---------------------
 
-Here we have coded a Block. A block enables us to manage errors easily. We start with hosts: managedhosts as in inventory file has been set. For each IP address present in the group managedhosts ansible will execute the actions inside "TASKS" directive. 
+The playbook needs hosts to operate on. We are using here a JINJA2 template and a the "default" filter to tell Ansible that hosts to poerate on must be took from the defualt value, which is "hostsmanaged" or from "--extra-vars" values which needs to be define as "--extra-vars hosts2manage=all".  
 
-We are going to check the hostvars content, which is populated when the gather_facts module is automatically executed. In this case we are checking the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdb"] to determine if sdb exists.
+We need to create filessystems and mount them, and this activities need privileges, so we are instructing Ansible to escalate privileges with *become* clause set to true. We are also telling Ansible to become to the root user, with *become_user* clause, to execute all the actions defined in the playbook's *tasks* section.
+
+Here we have coded a Block. A block enables us to manage errors easily. We start with hosts: managedhosts as in inventory file has been set. For each IP address present in the group "managedhosts", ansible will execute the actions inside "TASKS" directive. 
+
+We are going to check the "hostvars" content, which is populated when the *gather_facts* module is automatically executed. In this case we are checking the value of the dictionary with hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdb"] (and sdc) to determine if sdb/sdc exist.
 
 [NOTE]
 https://docs.ansible.com/ansible/latest/modules/gather_facts_module.html[gather_facts module reference]
@@ -514,15 +519,17 @@ https://docs.ansible.com/ansible/latest/modules/gather_facts_module.html[gather_
 [NOTE]
 hostvars is a dictionary keyed by each host.
 
-In case one or both devices are not present, a fact is created called "proceedWithInstallation" that will be useful to execute the rest of our playbook. If this variable is set to no, further installation won't be executed. This occurs in the rescue clause where we use set_fact to update the proceedWithIntsllation variable.
+In case one or both devices are not present, a fact is created called "proceedWithInstallation", which is global, that will be useful to execute the rest of our playbook. If this variable is set to "no", further installation won't be executed. This occurs in the *rescue* clause where we use *set_fact* module to update the "proceedWithIntsllation" variable.
 
-The trick here is use the *when* clause to chack for the existance of the device in the facts gathered. 
+The trick here is to use the *when* clause to check for the existance of the device in the facts gathered. 
 
 *when:  hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdb"]*
 
-Here the when clause needs to check if this value is present with the keys "devices" and "sdb". 
+Here the *when* clause needs to check if this value is present with the keys "devices" and "sdb". 
 
 After we check the existence of our devices we proceed to create the volume group and logical volume to be mounted.
+
+So, let's see the next part of our playbook.
 
 [source,bash]
 --------------------
@@ -579,13 +586,15 @@ After we check the existence of our devices we proceed to create the volume grou
           
 Another block is created with a *when* clause to execute the procedure if both devices are present. 
 
-The playbook proceed with the following:
+The playbook proceeds with the following:
 
 - Create a volume group called *chatbotVG* with "sdb" and "sdc" devices using *lvg* ansible module.
 - Create a logical volume called *data* which size is 4 Gb using *lvol* ansible module.
 - Create a filesystem XFS on "/dev/mapper/chatbotVG-data" using *filesystem* ansible module.
 - Create a mount point called "/home/chatbot"  using *file* ansible module.
 - Mount "/dev/mapper/chatbotVG-data" on "/home/chatbot" using *mount* ansible module.
+
+So, the execution is pretty straighforward using *ansible-playbook* command.
 
 [source, bash]
 ------------------
@@ -625,7 +634,14 @@ PLAY RECAP *********************************************************************
 
 ------------------
 
-Every task has some hints of what just happened. 
+The playbook operates on the default value "hostsmanaged", nevertheless we can execute the playbook using a different hosts, just by defining the "hosts2manage" variable on the command line like this:
+
+[source, bash]
+------------------
+# ansible-playbook chatbotCreateFilesystem.yml -i ./inventory --extra-vars "hosts2manage=all"
+------------------
+
+Every task executed has some hints of what just happened. 
 
 * changed. It is shown when the task has been successfully executed and the action changes something in the remote host. This could be that, for example, the filesystem that did not exist was created.
 
@@ -634,32 +650,40 @@ Every task has some hints of what just happened.
 * skipping: By a conditional condition, the task was skipped. In this playbook, a task that expects an error was not executed because there were no errorrs in the execution.
 
 [NOTE] 
-At this stage, the filesystem was created and mounted on /home/chatbot. This directory will be used for cloning the github repository where the application is stored.
+At this stage, the filesystem was created and mounted on "/home/chatbot". This directory will be used for cloning the github repository where the application is stored.
+
+[NOTE]
+Let's think about how we can reverse all these changes in a playbook.
 
 === installing the application dependencies.
 
-The chatbot application is python 3 based, so we need to install python 3 on our remote servers. We are going to create a playbook for installing this package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an *idempotent tool*. Ansible will look to get to the desired stated (installed). If the package or the  libraries are already installed any of the actions associated will be executed.
+The chatbot application is python 3 based, so we need to install python 3 on our remote servers. We are going to create a playbook for installing this package, but also check and install the required libraries if needed. When we say "if needed" we refer ourselves to the fact that ansible is an *idempotent tool*. Ansible will look to get to the desired state (installed). If the package or the libraries are already installed any of the actions associated will be executed.
 
 [NOTE] 
-Also, we will need to install git in order for the remote host to be able to clone the chatbot application repository.
+Also, we will need to install *git* in order for the remote host to be able to clone the chatbot application repository.
 
 Let's start by creating this playbook.
 
-[NOTE] by now, we are creating independent Playbooks as big blocks as far as simplicity of explanation is concerned. At the end we will be using the Ansible import_playbook directive to import every individual playbook and execute them as a whole.
+[NOTE] by now, we are creating independent Playbooks as big blocks, as far as simplicity of explanation is concerned. At the end we will be using the Ansible *import_playbook* directive to import every individual playbook and execute them as a whole.
 
 [source,bash]
 ----------------------
 # vim chatbotInstallPythonDependencies.yml
 
 ---
-  - hosts: managedhosts
-    name: Installing software dependencies
+  - name: Installing software dependencies
+    hosts: managedhosts
+
+    become: yes
+    become_user: root
+    
     gather_facts: no 
+    
     tasks:
     
-      - name: installing python 3.6
+      - name: installing python 3
         yum: 
-          name: python36
+          name: python3
           state: latest
 
       - name: installing git
@@ -688,27 +712,27 @@ Let's start by creating this playbook.
           name: flask
 ----------------------
 
-We don't need to gather facts in this playbook, because we don´t need any host based variable to execute tasks, so we can speed up the execution of this playbook using the gather_fact module.
+We don't need to gather facts in this playbook, because we don´t need any host based variable to execute tasks, so we can speed up the execution of this playbook using the *gather_fact* module.
 
-The hosts to interact with are which are present in the managedhosts group of the inventory created previously. In our case is the IP Address 192.168.56.119.
+The hosts to interact with are which are present in the *managedhosts* group of the inventory created previously. In our case is the IP Address 192.168.56.119.
 
 The tasks define for this stage are:
 
-* First, we need to be sure python 3.6 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the *yum module* which needs the package name (in this case python36 for RHEL 8.1) and the state. This flag tells ansible to install the package if not present or update it to the latest version if needed.
+* First, we need to be sure python 3 is installed, otherwise ansible needs to make sure the latest version is installed properly. This is done by the *yum* module which needs the package name (in this case python3) and the *state*. This flag tells ansible to install the package if not present or update it to the latest version if needed.
 
-- name: python36
-- state: latest
+*- name: python3*
+*- state: latest*
 
-* GIT is also needed on the remote hosts. This is because in the following playbook we will need to clone the application repository. So, we use the yum module again to install it.
+* GIT is also needed on the remote hosts. This is because in the following playbook we will need to clone the application repository. So, we use the *yum* module again to install it.
 
-- name: git
-- state: latest
+*- name: git*
+*- state: latest*
 
 * The following actions are related to the installation of some required libraries. In this case nltk for natural language processing, numpy for numerical calculations, tflearn and tensorflow for applying artificial intelligence to the chatbot, and Flask for the creation of the web service delivered by webChat.py. The *pip module* only needs the *name* of the libraries that need to be installed.
 
 [source,bash]
 ----------------------
-# ansible-playbook installChatBotPythonDependencies.yml -i ./inventory
+# ansible-playbook chatbotInstallPythonDependencies.yml -i ./inventory
 
 PLAY [[Installing software dependencies] ******************************************************************************************************************************************
 
