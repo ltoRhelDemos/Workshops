@@ -1641,6 +1641,9 @@ image::chatbot.png[]
 This concludes this workshop. I Hope this information will be useful to realize in your own terms how ansible can help you to be more productive and more consistent in your daily work!
 
 
+== SURVEY
+
+https://forms.gle/PBMxAMFKbYG7bLZA8[Evaluate US]
 
 
 
