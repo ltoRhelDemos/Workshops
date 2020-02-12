@@ -1158,23 +1158,26 @@ Now that we are sure the application is installed and everything goes well it's 
 ----------------------
 # vim chatbotStartServices.yml
 ---
-  - hosts: managedhosts
-    name: Starting chatbot services
+  - name: Starting chatbot services
+
+    hosts: '{{ hosts2manage | default("managedhosts") }}'
+
+    become: yes
+    become_user: root
+
     gather_facts: no
 
     tasks:
 
       - name: enable ansibleChatbotEngine service
         systemd:
-          name: ansibleChatbotEngine
-          state: started
+          name: "{{ item }}"
+          state: restarted
           enabled: yes
+        loop:
+          - ansibleChatbotEngine
+          - ansibleChatbotWebInterface  
 
-      - name: enable ansibleChatbotWebInterface service
-        systemd:
-          name: ansibleChatbotWebInterface
-          state: started
-          enabled: yes
 ----------------------
 
 Enabling the services is an easy task using *systemd module*. For both services we are going to start them with the *enable* directive in order to ansible, not only to start the services, but making them automatically restarting at boot time.
@@ -1185,16 +1188,14 @@ Let's execute the playbook.
 ----------------------
 # ansible-playbook chatbotStartServices.yml -i ./inventory
 
-PLAY [Starting chatbot services] *************************************************************************************************************************
+PLAY [Starting chatbot services] *****************************************************
 
-TASK [enable ansibleChatbot service] *************************************************************************************************************************
-changed: [192.168.56.126]
+TASK [enable ansibleChatbotEngine service] *******************************************
+changed: [192.168.56.119] => (item=ansibleChatbotEngine)
+changed: [192.168.56.119] => (item=ansibleChatbotWebInterface)
 
-TASK [enable ansibleChatbotWebInterface service] *************************************************************************************************************************
-changed: [192.168.56.126]
-
-PLAY RECAP **************************************************************************************************************
-192.168.56.126             : ok=2    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+PLAY RECAP ***************************************************************************
+192.168.56.119             : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ----------------------
 
 After the execution we see that both services were changed to *started*.
