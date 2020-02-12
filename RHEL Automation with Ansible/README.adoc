@@ -926,31 +926,36 @@ We also need to open ports to get the application running properly and create th
 # vim chatbotInstallSoftware.yml
 
 ---
-  - hosts: managedhosts
-    name: Installing chatbot software
+  - name: Installing chatbot software
+
+    hosts: '{{ hosts2manage | default("managedhosts") }}'
+
+    become: yes
+    become_user: root
+
     gather_facts: no
+    
     tasks:
 
-    - name: Cloning the chatbot software repository
+    - name: Setting reboot to "no" unless needed
+      set_fact: reboot=no
+      
+    - name: Clonning the chatbot software repository
       git:
         repo: 'https://github.com/ltoRhelDemos/python-ansible-chatbot.git'
         dest: /home/chatbot/
         force: yes
 
-    - name: copying ansibleChatbotEngine.service template to /etc/systemd/system
+    - name: copying files template to /etc/systemd/system
       copy:
-        src: /home/chatbot/ansibleChatbotEngine.service
+        src: "{{ item }}"
         dest: /etc/systemd/system
         remote_src: yes
         mode: '0644'
+      loop: 
+        - /home/chatbot/ansibleChatbotEngine.service 
+        - /home/chatbot/ansibleChatbotWebInterface.service
 
-    - name: copying ansibleChatbotWebInterface.service template to /etc/systemd/system
-      copy:
-        src: /home/chatbot/ansibleChatbotWebInterface.service
-        dest: /etc/systemd/system
-        remote_src: yes
-        mode: '0644'
-        
     - name: Openning the webservice ports
       firewalld:
         port: "{{ item }}"
@@ -960,13 +965,14 @@ We also need to open ports to get the application running properly and create th
         - 8080/tcp
         - 9095/tcp
       notify: "restart firewalld"
-
+        
     handlers:
     - name: restarting the firewalld
       service:
         name: firewalld
         state: restarted
       listen: "restart firewalld"  
+
 ----------------------
 
 The following steps are done:
@@ -989,13 +995,11 @@ ok: [192.168.56.119]
 TASK [Clonning the chatbot software repository] **************************************
 changed: [192.168.56.119]
 
-TASK [copying ansibleChatbotEngine.service template to /etc/systemd/system] **********
-changed: [192.168.56.119]
+TASK [copying files template to /etc/systemd/system] *********************************
+changed: [192.168.56.119] => (item=/home/chatbot/ansibleChatbotEngine.service)
+changed: [192.168.56.119] => (item=/home/chatbot/ansibleChatbotWebInterface.service)
 
-TASK [copying ansibleChatbotWebInterface.service template to /etc/systemd/system] ****
-changed: [192.168.56.119]
-
-TASK [Openning the webservice port 8080] *********************************************
+TASK [Openning the webservice ports] *************************************************
 changed: [192.168.56.119] => (item=8080/tcp)
 changed: [192.168.56.119] => (item=9095/tcp)
 
@@ -1003,7 +1007,8 @@ RUNNING HANDLER [restarting the firewalld] *************************************
 changed: [192.168.56.119]
 
 PLAY RECAP ***************************************************************************
-192.168.56.119             : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+192.168.56.129             : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
 ----------------------
 
 The playbook is executed successfully having 6 changes, in this case the repository cloning, the systemd configuration files copied to "/etc/systemd/system" directory for manipulating our programs as services, the firewalld update to open 8080 and 9095 tcp ports and the firewalld process restart (if needed).
