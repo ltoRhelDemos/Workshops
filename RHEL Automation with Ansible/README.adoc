@@ -331,11 +331,11 @@ Let’s find our first module
 
 We can run ad-hoc commands on managed hosts with the module “command”. 
 
-The module can be found at
+The module can be found at:
 
 https://docs.ansible.com/ansible/latest/modules/command_module.html?highlight=command
 
-Let’s find out if the module cab me executed as an ad-hoc command
+Let’s find out if the module can be executed as an ad-hoc command
 
 [source,bash]
 --------------------
