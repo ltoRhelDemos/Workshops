@@ -1265,13 +1265,35 @@ Let's create a masterPlaybook.
 ----------------------
 # vim chatbotMasterPlaybook.yml
 
----
+--- 
+  - name: Chatbot Master Playbook 
+    gather_facts: no
 
-  - import_playbook: chatbotCreateFilesystem.yml
-  - import_playbook: chatbotInstallPythonDependencies.yml
-  - import_playbook: chatbotInstallSoftware.yml
-  - import_playbook: chatbotStartServices.yml
-  - import_playbook: chatbotRebootServer.yml
+    hosts: "all"
+    
+  - name: Importing chatbotCreateFilesystem 
+    import_playbook: chatbotCreateFilesystem.yml hosts2manage="{{ h2m | default("managedhosts") }}"
+    
+  - name: Importing chatbotInstallPythonDependencies 
+    import_playbook: chatbotInstallPythonDependencies.yml hosts2manage="{{ h2m | default("managedhosts") }}"
+    when: 
+      - hostvars[inventory_hostname]['proceedWithInstallation']
+    
+  - name: Importing chatbotInstallSoftware 
+    import_playbook: chatbotInstallSoftware.yml hosts2manage="{{ h2m | default("managedhosts") }}"
+    when: 
+      - hostvars[inventory_hostname]['proceedWithInstallation']
+    
+  - name: Importing chatbotStartServices
+    import_playbook: chatbotStartServices.yml hosts2manage="{{ h2m | default("managedhosts") }}"
+    when: 
+      - hostvars[inventory_hostname]['proceedWithInstallation']
+
+  - name: Importing chatbotRebootServer
+    import_playbook: chatbotRebootServer.yml hosts2manage="{{ h2m | default("managedhosts") }}"
+    when: 
+      - hostvars[inventory_hostname]['proceedWithInstallation'] 
+      - hostvars[inventory_hostname]['reboot'] 
 ----------------------
 
 After saving this playbook, the execution will be importing the previously created playbooks and those will be executed in the order they appear.
