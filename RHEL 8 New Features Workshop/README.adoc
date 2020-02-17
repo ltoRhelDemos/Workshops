@@ -229,7 +229,7 @@ Optional: Exporting recorded sessions to a file
 [source, bash]
 ------------------
 # yum install systemd-journal-remote
-# journalctl -o export | systemd-journal-remote -o /tmp/dir/example.journal -
+# journalctl -o export | /usr/lib/systemd/systemd-journal-remote -o /tmp/dir/example.journal -
 ------------------
 
 Optional: playing back the session using tlog-play
