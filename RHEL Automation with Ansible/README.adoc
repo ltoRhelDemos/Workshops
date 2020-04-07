@@ -502,7 +502,6 @@ Let's begin by checking that boths devices are present
             set_fact: proceedWithInstallation=no
         when:
           - hostvars[inventory_hostname]['proceedWithInstallation']
-...
 ---------------------
 
 The playbook needs hosts to operate on. We are using here a JINJA2 template and the "default" filter to tell Ansible that hosts to operate on must be took from the defualt value, which is "hostsmanaged" or from "--extra-vars" values which needs to be defined as *--extra-vars* "hosts2manage=whichever host we need to operate on".  
@@ -533,7 +532,6 @@ So, let's see the next part of our playbook.
 
 [source,bash]
 --------------------
-...
       - name: creating disk facilities
         block:
           - name: Creating chatbot Volume group.
@@ -685,6 +683,11 @@ Let's start by creating this playbook.
         yum: 
           name: python3
           state: latest
+      
+      - name: installing python 3 development tools
+        yum: 
+          name: python3-devel
+          state: latest          
 
       - name: installing git
         yum: 
