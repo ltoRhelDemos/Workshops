@@ -1219,7 +1219,7 @@ This is the final step to be done in order to guarantee the service will survive
 [source,bash]
 ----------------------
 ---
-  - hosts: managedhosts
+  - hosts: '{{ hosts2manage | default("managedhosts") }}'
     name: Rebooting...
     gather_facts: no
     
