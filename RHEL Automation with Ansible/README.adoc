@@ -1685,6 +1685,12 @@ image::chatbot.png[]
 This concludes this workshop. I Hope this information will be useful to realize in your own terms how ansible can help you to be more productive and more consistent in your daily work!
 
 
+== PLAYBOOKS
+
+https://github.com/ltoRhelDemos/ansible-chatbot-installation-playbooks[Installation Playbooks]
+
+https://github.com/ltoRhelDemos/ansible-chatbot-removal-playbooks(Removal Playbooks]
+
 == SURVEY
 
 https://forms.gle/AwTjgVhoPQ9e4gsUA[Evaluate US]
