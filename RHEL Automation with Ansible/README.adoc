@@ -1689,7 +1689,7 @@ This concludes this workshop. I Hope this information will be useful to realize 
 
 https://github.com/ltoRhelDemos/ansible-chatbot-installation-playbooks[Installation Playbooks]
 
-https://github.com/ltoRhelDemos/ansible-chatbot-removal-playbooks(Removal Playbooks]
+https://github.com/ltoRhelDemos/ansible-chatbot-removal-playbooks[Removal Playbooks]
 
 == SURVEY
 
