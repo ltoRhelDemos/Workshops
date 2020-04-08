@@ -1180,9 +1180,9 @@ Now that we are sure the application is installed and everything goes well it's 
     tasks:
 
       - name: enable ansibleChatbotEngine service
-        systemd:
+        service:
           name: "{{ item }}"
-          state: restarted
+          state: started
           enabled: yes
         loop:
           - ansibleChatbotEngine
