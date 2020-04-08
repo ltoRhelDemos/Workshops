@@ -474,34 +474,39 @@ Let's begin by checking that boths devices are present
 
 ---
   - name: Creating the chatbot filesystem
-    
+
     hosts: '{{ hosts2manage | default("managedhosts") }}'
-    
+
     become: yes
     become_user: root
 
+    vars:
+      disk1: "sdb"
+      disk2: "sdc"
+
     tasks:
 
-      - name: check sdb
+      - name: check {{disk1}}
         block:
-          - name: checking for device /dev/sdb
+          - name: checking for device /dev/{{disk1}}
             set_fact: proceedWithInstallation=yes
-            when:  hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdb"] 
+            when:  hostvars[inventory_hostname]["ansible_facts"]["devices"]["{{disk1}}"]
         rescue:
-          - name: Device /dev/sdb does not exist!
+          - name: Device /dev/{{disk1}} does not exist!
             set_fact: proceedWithInstallation=no
-          
 
-      - name: check sdc
+
+      - name: check {{disk2}}
         block:
-          - name: checking for device /dev/sdc
+          - name: checking for device /dev/{{disk2}}
             set_fact: proceedWithInstallation=yes
-            when:  hostvars[inventory_hostname]["ansible_facts"]["devices"]["sdc"] 
+            when:  hostvars[inventory_hostname]["ansible_facts"]["devices"]["{{disk2}}"]
         rescue:
           - name: Device /dev/sdc does not exist!
             set_fact: proceedWithInstallation=no
         when:
           - hostvars[inventory_hostname]['proceedWithInstallation']
+
 ---------------------
 
 The playbook needs hosts to operate on. We are using here a JINJA2 template and the "default" filter to tell Ansible that hosts to operate on must be took from the defualt value, which is "hostsmanaged" or from "--extra-vars" values which needs to be defined as *--extra-vars* "hosts2manage=whichever host we need to operate on".  
@@ -536,7 +541,7 @@ So, let's see the next part of our playbook.
         block:
           - name: Creating chatbot Volume group.
             lvg:
-              pvs: "/dev/sdb,/dev/sdc"
+              pvs: "/dev/{{disk1}},/dev/{{disk2}}"
               vg: "chatbotVG"
               pv_options: '-Z y'
               force: no
@@ -574,12 +579,13 @@ So, let's see the next part of our playbook.
         when:
           - hostvars[inventory_hostname]['proceedWithInstallation']
 
-        
+
       - name: Error on disk creation results
-        debug: 
-          msg: "An error occured when trying to create the disk facilities for the chatbot, aborting installation! {{hostvars[inventory_hostname]['proceedWithInstallation']}}"
-        when:  
-          - not hostvars[inventory_hostname]['proceedWithInstallation']      
+        debug:
+          msg: "An error occured when trying to create the disk facilities for the chatbot, aborting installation! {{hostvars[inventory_hostnam
+e]['proceedWithInstallation']}}"
+        when:
+          - not hostvars[inventory_hostname]['proceedWithInstallation']
 --------------------
           
 Another block is created with a *when* clause to execute the procedure if both devices are present. 
