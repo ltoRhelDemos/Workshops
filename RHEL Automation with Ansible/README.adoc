@@ -720,7 +720,7 @@ Let's start by creating this playbook.
       - name: installing tensorflow
         pip:
           name: tensorflow
-          state: latest
+          version: 1.5
           extra_args: --no-cache-dir
 
       - name: installing flask
@@ -860,6 +860,13 @@ The following snipped playbook reflects some changes to optimize the playbook we
               - numpy
               - tensorflow
               - flask
+              
+          - name: pip install...
+            pip: 
+              name: tensorflow
+              version: 1.5
+              extra_args: --no-cache-dir
+
         rescue:
           - name: Error installing requires python libraries!
             set_fact: proceedWithInstallation=no            
