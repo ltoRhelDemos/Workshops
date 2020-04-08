@@ -1,0 +1,55 @@
+:scrollbar:
+:data-uri:
+:toc2:
+:imagesdir: images
+
+= Notes for configuring loop devices on RHEL
+
+== Description
+
+If the RHEL image is not configured with two extra disks (/dev/sdx) for executing this workshop, you can add loop devices based on files to overcome this disadvantage.
+
+== Procedure
+
+For creating the first disk you can issue the following commands.
+
+[source, bash]
+--------------------------
+dd if=/dev/zero of=disk1.img bs=100M count=80
+losetup -fP disk1.img
+--------------------------
+
+Then create the second loop device.
+
+[source, bash]
+--------------------------
+dd if=/dev/zero of=disk2.img bs=100M count=80
+losetup -fP disk2.img
+--------------------------
+
+To see the names of the recntly created disks issue the following command
+
+[source, bash]
+--------------------------
+losetup -a
+
+/dev/loop1: [64768]:41943236 (/root/ansible/disk2.img)
+/dev/loop0: [64768]:41943235 (/root/ansible/disk1.img)
+--------------------------
+
+now the both devices are present as a regular disk in /dev.
+
+For this workshop you only need to change the variables disk1 and disk2 in the playbook: chatbotCreateFilesystem.yml    
+
+Original in the playbook
+
+vars:
+  disk1: "sdb"
+  disk2: "sdc"
+  
+New playbook with disk1 and disk2 updated
+
+vars:
+  disk1: "loop0"
+  disk2: "loop1"
+
