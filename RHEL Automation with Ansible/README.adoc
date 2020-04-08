@@ -840,6 +840,7 @@ The following snipped playbook reflects some changes to optimize the playbook we
               state: latest
             loop: 
               - python3  
+              - python3-devel
               - git
               - firewalld
         rescue:
