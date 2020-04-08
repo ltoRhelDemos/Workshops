@@ -27,7 +27,7 @@ dd if=/dev/zero of=disk2.img bs=100M count=80
 losetup -fP disk2.img
 --------------------------
 
-To see the names of the recntly created disks issue the following command
+To see the names of the recently created disks, issue the following command
 
 [source, bash]
 --------------------------
@@ -37,7 +37,7 @@ losetup -a
 /dev/loop0: [64768]:41943235 (/root/ansible/disk1.img)
 --------------------------
 
-now the both devices are present as a regular disk in /dev.
+Now both devices are present as a regular disks in /dev
 
 For this workshop you only need to change the variables disk1 and disk2 in the playbook: chatbotCreateFilesystem.yml    
 
