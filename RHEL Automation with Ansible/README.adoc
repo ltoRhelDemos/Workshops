@@ -860,7 +860,7 @@ The following snipped playbook reflects some changes to optimize the playbook we
               - numpy
               - flask
               
-          - name: pip install...
+          - name: pip installing tensorflow
             pip: 
               name: tensorflow
               version: "1.5"
