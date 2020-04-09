@@ -38,7 +38,7 @@ password: *r3dh4t1!*
 
 If you go with this option you will have to use the server as control host and managed host. This server has *ansible* already installed so you can skip the installation steps described in this document.
 
-For installing the application that is part of the goal of this lab you will have to creato two loop devices as desscriobed https://github.com/ltoRhelDemos/Workshops/blob/master/RHEL%20Automation%20with%20Ansible/loopbackDevices.adoc[here], before start the exercises.
+For installing the application that is part of the goal of this lab you will have to create two loop devices as described https://github.com/ltoRhelDemos/Workshops/blob/master/RHEL%20Automation%20with%20Ansible/loopbackDevices.adoc[here], before start the exercises.
 
 === Install Virtualbox
 
