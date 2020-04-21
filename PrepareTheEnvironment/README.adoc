@@ -34,7 +34,7 @@ image::dhcp_activation.png[dhcp server activation]
 === Download the RHEL 8x virtual machine
 
 * Download the unregistered applicance from 
-https://1drv.ms/u/s!AjxeDEQoUvfXmlCTJwmwYNtjuwYa?e=K8ChoM[RHEL 8.1 virtual machine (.ova)^]
+https://www.dropbox.com/s/vf205c16y6y9hoa/RHEL%208%20New%20Features.ova?dl=0[RHEL 8.x virtual machine (.ova)^]
 * Import the MV to VirtualBox.
 * Rename the MV to “RHEL 8 Server”.
 * Boot the server
