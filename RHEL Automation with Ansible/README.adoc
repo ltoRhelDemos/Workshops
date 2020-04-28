@@ -246,6 +246,18 @@ Now try logging into the machine, with:   ssh root@192.168.56.121
 and check to make sure that only the key(s) you wanted were added.
 -----------------
 
+An example with amazon. 
+
+If we have a public key of the server we need to access, we can stablish a temporal trusted domain using an ssh agent.
+
+[source,bash]
+-----------------
+# eval `ssh-agent -s`
+# ssh-add -k cpkey.pem 
+-----------------
+
+In this case we can execute several ssh conexions without the need of re-authentication until de session expires.
+
 [NOTE]
 Now there is trust between control and managed host. We are ready for the next step.
 
