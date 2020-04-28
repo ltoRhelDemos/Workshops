@@ -1673,9 +1673,9 @@ https://github.com/ltoRhelDemos/ansible-chatbot-installation-playbooks[Installat
 
 https://github.com/ltoRhelDemos/ansible-chatbot-removal-playbooks[Removal Playbooks]
 
-== SURVEY
+== EVALUATE US
 
-https://forms.gle/AwTjgVhoPQ9e4gsUA[Evaluate US]
+https://forms.gle/BdWd8xda3F1h8hMCA[Survey]
 
 
 
