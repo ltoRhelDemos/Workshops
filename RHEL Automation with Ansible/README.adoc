@@ -668,22 +668,22 @@ Let's start by creating this playbook.
     tasks:
     
       - name: installing python 3
-        yum: 
+        package: 
           name: python3
           state: latest
       
       - name: installing python 3 development tools
-        yum: 
+        package: 
           name: python3-devel
           state: latest          
 
       - name: installing git
-        yum: 
+        package: 
           name: git
           state: latest
    
       - name: installing firewalld
-        yum: 
+        package: 
           name: firewalld
           state: latest
    
@@ -823,7 +823,7 @@ The following snipped playbook reflects some changes to optimize the playbook we
       - name: Installing required packages
         block: 
           - name: yum install...
-            yum: 
+            package: 
               name: "{{ item }}"
               state: latest
             loop: 
