@@ -1415,6 +1415,8 @@ login in the ansile server, go to /root/ansible and create the following playboo
 
     name: Ansible Tower Installation
     gather_facts: no
+    become: yes
+    become_user: root
 
     vars:
       dest: '/root/tower'
